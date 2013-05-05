@@ -34,11 +34,20 @@ Result Compressor::compress(const void* source, size_t sourceSize, void* destina
 		return RESULT_ERROR_BUFFER_TOO_SMALL;
 	}
 
+#ifndef DOBOZ_MK_OPT
+	// logic change
+	// I would like to pass smaller buffer and check if it can be compressed
+	// into it, so don't check now, check when buffer is going to be overflown
+
 	uint64_t maxCompressedSize = getMaxCompressedSize(sourceSize);
 	if (destinationSize < maxCompressedSize)
 	{
 		return RESULT_ERROR_BUFFER_TOO_SMALL;
 	}
+#else
+	uint64_t storedSize = getMaxCompressedSize(sourceSize);
+	uint64_t maxCompressedSize = destinationSize;
+#endif
 
 	const uint8_t* inputBuffer = static_cast<const uint8_t*>(source);
 	uint8_t* outputBuffer = static_cast<uint8_t*>(destination);
@@ -94,8 +103,16 @@ Result Compressor::compress(const void* source, size_t sourceSize, void* destina
 		// During each iteration, we may output up to 8 bytes (2 words), and the compressed stream ends with 4 dummy bytes
 		if (outputIterator + 2 * WORD_SIZE + TRAILING_DUMMY_SIZE > maxOutputEnd)
 		{
+#ifndef DOBOZ_MK_OPT
 			// Stop the compression and instead store
 			return store(source, sourceSize, destination, compressedSize);
+#else
+			if (storedSize <= destinationSize)
+			{
+				return store(source, sourceSize, destination, compressedSize);
+			}
+			return RESULT_ERROR_BUFFER_TOO_SMALL;
+#endif
 		}
 
 		// Check whether the control word must be flushed
