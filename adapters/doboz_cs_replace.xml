@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <rx>
 	<macro name="ident" text="[a-zA-Z0-9_]+"/>
+	<macro name="esc"><text><![CDATA[(\\x[0-9a-fA-F]{2})|(\\u[0-9a-fA-F]{4})|(\\[^xu])]]></text></macro>
+	<macro name="string"><text><![CDATA["(([^"\\])|($(esc)))*"]]></text></macro>
+	<macro name="char"><text><![CDATA['(([^'\\])|($(esc)))']]></text></macro>
+	
+	<macro name="rbracket"><text><![CDATA[\((?<rexpr>(?>\((?<RDEPTH>)|\)(?<-RDEPTH>)|[^()]?)*(?(RDEPTH)(?!)))\)]]></text></macro>
+	<macro name="qbracket"><text><![CDATA[\[(?<qexpr>(?>\[(?<QDEPTH>)|\](?<-QDEPTH>)|[^\[\]]?)*(?(QDEPTH)(?!)))\]]]></text></macro>
+	<macro name="tbracket"><text><![CDATA[\<(?<texpr>(?>\<(?<RDEPTH>)|\>(?<-RDEPTH>)|[^<>]?)*(?(RDEPTH)(?!)))\>]]></text></macro>
+	
+	<macro name="type" text="byte|sbyte|int|uint|short|ushort|long|ulong|char"/>
 	
 	<replace rx="true"  with="$(name)*" rerun="false">
-		<text><![CDATA[(const\s+)?(?<name>$(ident))\s*\*(\s+const)?]]></text>
+		<text><![CDATA[(const\s+)?(?<name>$(type))\s*\*(\s+const)?]]></text>
+	</replace>
+	
+	<replace rx="true">
+		<text><![CDATA[(reinterpret_cast|static_cast)\s*$(tbracket)\s*$(rbracket)]]></text>
+		<with>(($(texpr))($(rexpr)))</with>
 	</replace>
 
 	<!--

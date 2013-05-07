@@ -18,3 +18,4 @@ source/Tests/Doboz.Tests/obj/*
 source/ipch/*
 source/libDoboz/obj/*
 *.nupkg
+*.opensdf

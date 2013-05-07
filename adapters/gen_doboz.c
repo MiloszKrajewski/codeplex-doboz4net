@@ -7,21 +7,33 @@
 # 1 "..\\original\\Source\\Doboz\\Decompressor.cpp" 1
 /*
 
- * Doboz Data Compression Library* Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
+ * Doboz Data Compression Library
+
+ * Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
 
  *
 
- * This software is provided 'as-is', without any express or implied warranty. In no event will* the authors be held liable for any damages arising from the use of this software.
+ * This software is provided 'as-is', without any express or implied warranty. In no event will
+
+ * the authors be held liable for any damages arising from the use of this software.
 
  *
 
- * Permission is granted to anyone to use this software for any purpose, including commercial* applications, and to alter it and redistribute it freely, subject to the following restrictions:
+ * Permission is granted to anyone to use this software for any purpose, including commercial
+
+ * applications, and to alter it and redistribute it freely, subject to the following restrictions:
 
  *
 
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the*    original software. If you use this software in a product, an acknowledgment in the product*    documentation would be appreciated but is not required.
+ * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the
 
- * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as*    being the original software.
+ *    original software. If you use this software in a product, an acknowledgment in the product
+
+ *    documentation would be appreciated but is not required.
+
+ * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as
+
+ *    being the original software.
 
  * 3. This notice may not be removed or altered from any source distribution.
 
@@ -36,21 +48,33 @@
 # 1 "..\\original\\Source\\Doboz\\Decompressor.h" 1
 /*
 
- * Doboz Data Compression Library* Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
+ * Doboz Data Compression Library
+
+ * Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
 
  *
 
- * This software is provided 'as-is', without any express or implied warranty. In no event will* the authors be held liable for any damages arising from the use of this software.
+ * This software is provided 'as-is', without any express or implied warranty. In no event will
+
+ * the authors be held liable for any damages arising from the use of this software.
 
  *
 
- * Permission is granted to anyone to use this software for any purpose, including commercial* applications, and to alter it and redistribute it freely, subject to the following restrictions:
+ * Permission is granted to anyone to use this software for any purpose, including commercial
+
+ * applications, and to alter it and redistribute it freely, subject to the following restrictions:
 
  *
 
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the*    original software. If you use this software in a product, an acknowledgment in the product*    documentation would be appreciated but is not required.
+ * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the
 
- * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as*    being the original software.
+ *    original software. If you use this software in a product, an acknowledgment in the product
+
+ *    documentation would be appreciated but is not required.
+
+ * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as
+
+ *    being the original software.
 
  * 3. This notice may not be removed or altered from any source distribution.
 
@@ -60,21 +84,33 @@
 # 1 "..\\original\\Source\\Doboz\\Common.h" 1
 /*
 
- * Doboz Data Compression Library* Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
+ * Doboz Data Compression Library
+
+ * Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
 
  *
 
- * This software is provided 'as-is', without any express or implied warranty. In no event will* the authors be held liable for any damages arising from the use of this software.
+ * This software is provided 'as-is', without any express or implied warranty. In no event will
+
+ * the authors be held liable for any damages arising from the use of this software.
 
  *
 
- * Permission is granted to anyone to use this software for any purpose, including commercial* applications, and to alter it and redistribute it freely, subject to the following restrictions:
+ * Permission is granted to anyone to use this software for any purpose, including commercial
+
+ * applications, and to alter it and redistribute it freely, subject to the following restrictions:
 
  *
 
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the*    original software. If you use this software in a product, an acknowledgment in the product*    documentation would be appreciated but is not required.
+ * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the
 
- * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as*    being the original software.
+ *    original software. If you use this software in a product, an acknowledgment in the product
+
+ *    documentation would be appreciated but is not required.
+
+ * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as
+
+ *    being the original software.
 
  * 3. This notice may not be removed or altered from any source distribution.
 
@@ -135,28 +171,28 @@ const int MAX_MATCH_LENGTH = 255 + MIN_MATCH_LENGTH;
 const int MAX_MATCH_CANDIDATE_COUNT = 128;
 const int DICTIONARY_SIZE = 1 << 21; // 2 MB, must be a power of 2!
 
-const int TAIL_LENGTH = 2* WORD_SIZE; // prevents fast write operations from writing beyond the end of the buffer during decoding
+const int TAIL_LENGTH = 2 * WORD_SIZE; // prevents fast write operations from writing beyond the end of the buffer during decoding
 const int TRAILING_DUMMY_SIZE = WORD_SIZE; // safety trailing bytes which decrease the number of necessary buffer checks
 
 // Reads up to 4 bytes and returns them in a word
 // WARNING: May read more bytes than requested!
-inline uint PeekN_size_t size(void* source)
+inline uint PeekN_size_t size(const void* source)
 {
  Debug.Assert(size <= WORD_SIZE);
 
  switch (size)
  {
  case 4:
-  return*reinterpret_cast<uint*>(source);
+  return *((uint*)(source));
 
  case 3:
-  return*reinterpret_cast<uint*>(source);
+  return *((uint*)(source));
 
  case 2:
-  return*reinterpret_cast<ushort*>(source);
+  return *((ushort*)(source));
 
  case 1:
-  return*reinterpret_cast<byte*>(source);
+  return *((byte*)(source));
 
  default:
   return 0; // dummy
@@ -172,19 +208,19 @@ inline void PokeN_size_t size(void* destination,uint word)
  switch (size)
  {
  case 4:
-  *reinterpret_cast<uint*>(destination) = word;
+  *((uint*)(destination)) = word;
   break;
 
  case 3:
-  *reinterpret_cast<uint*>(destination) = word;
+  *((uint*)(destination)) = word;
   break;
 
  case 2:
-  *reinterpret_cast<ushort*>(destination) = static_cast<ushort>(word);
+  *((ushort*)(destination)) = ((ushort)(word));
   break;
 
  case 1:
-  *reinterpret_cast<byte*>(destination) = static_cast<byte>(word);
+  *((byte*)(destination)) = ((byte)(word));
   break;
  }
 }
@@ -210,16 +246,16 @@ public:
  // The source and destination buffers must not overlap
  // This operation is memory safe
  // On success, returns RESULT_OK
- Result decompress(void* source, int sourceSize, void* destination, int destinationSize);
+ Result decompress(const void* source, int sourceSize, void* destination, int destinationSize);
 
  // Retrieves information about a compressed block of data
  // This operation is memory safe
  // On success, returns RESULT_OK and outputs the compression information
- Result getCompressionInfo(void* source, int sourceSize, CompressionInfo& compressionInfo);
+ Result getCompressionInfo(const void* source, int sourceSize, CompressionInfo& compressionInfo);
 
 private:
- int decodeMatch(detail::Match& match, void* source);
- Result decodeHeader(detail::Header& header, void* source, int sourceSize, int& headerSize);
+ int decodeMatch(detail::Match& match, const void* source);
+ Result decodeHeader(detail::Header& header, const void* source, int sourceSize, int& headerSize);
 };
 
 } // namespace doboz
@@ -229,15 +265,15 @@ namespace doboz {
 
 using namespace detail;
 
-Result Decompressor::decompress(void* source, int sourceSize, void* destination, int destinationSize)
+Result Decompressor::decompress(const void* source, int sourceSize, void* destination, int destinationSize)
 {
  Debug.Assert(source != 0);
  Debug.Assert(destination != 0);
 
- byte* inputBuffer = static_cast<byte*>(source);
+ byte* inputBuffer = ((byte*)(source));
  byte* src_p = inputBuffer;
 
- byte* outputBuffer = static_cast<byte*>(destination);
+ byte* outputBuffer = ((byte*)(destination));
  byte* dst_p = outputBuffer;
 
  Debug.Assert((inputBuffer + sourceSize <= outputBuffer || inputBuffer >= outputBuffer + destinationSize) && "The source and destination buffers must not overlap.")
@@ -266,7 +302,7 @@ Result Decompressor::decompress(void* source, int sourceSize, void* destination,
   return RESULT_ERROR_BUFFER_TOO_SMALL;
  }
 
- int uncompressedSize = static_cast<int>(header.uncompressedSize);
+ int uncompressedSize = ((int)(header.uncompressedSize));
 
  // If the data is simply stored, copy it to the destination buffer and we're done
  if (header.isStored)
@@ -275,7 +311,7 @@ Result Decompressor::decompress(void* source, int sourceSize, void* destination,
   return RESULT_OK;
  }
 
- byte* src_end = inputBuffer + static_cast<int>(header.compressedSize);
+ byte* src_end = inputBuffer + ((int)(header.compressedSize));
  byte* dst_end = outputBuffer + uncompressedSize;
 
  // Compute pointer to the first byte of the output 'tail'
@@ -291,7 +327,7 @@ Result Decompressor::decompress(void* source, int sourceSize, void* destination,
   // Check whether there is enough data left in the input buffer
   // In order to decode the next literal/match, we have to read up to 8 bytes (2 words)
   // Thanks to the trailing dummy, there must be at least 8 remaining input bytes
-  if (src_p + 2* WORD_SIZE > src_end)
+  if (src_p + 2 * WORD_SIZE > src_end)
   {
    return RESULT_ERROR_CORRUPTED_DATA;
   }
@@ -428,7 +464,7 @@ Result Decompressor::decompress(void* source, int sourceSize, void* destination,
 }
 
 // Decodes a match and returns its size in bytes
-inline int Decompressor::decodeMatch(Match& match, void* source)
+inline int Decompressor::decodeMatch(Match& match, const void* source)
 {
  // Use a decoding lookup table in order to avoid expensive branches
  static const struct
@@ -458,17 +494,17 @@ inline int Decompressor::decodeMatch(Match& match, void* source)
  uint i = word & 7;
 
  // Compute the match offset and length using the lookup table entry
- match.offset = static_cast<int>((word & lut[i].mask) >> lut[i].offsetShift);
- match.length = static_cast<int>(((word >> lut[i].lengthShift) & lut[i].lengthMask) + MIN_MATCH_LENGTH);
+ match.offset = ((int)((word & lut[i].mask) >> lut[i].offsetShift));
+ match.length = ((int)(((word >> lut[i].lengthShift) & lut[i].lengthMask) + MIN_MATCH_LENGTH));
 
  return lut[i].size;
 }
 
 // Decodes a header and returns its size in bytes
 // If the header is not valid, the function returns 0
-Result Decompressor::decodeHeader(Header& header, void* source, int sourceSize, int& headerSize)
+Result Decompressor::decodeHeader(Header& header, const void* source, int sourceSize, int& headerSize)
 {
- byte* src_p = static_cast<byte*>(source);
+ byte* src_p = ((byte*)(source));
 
  // Decode the attribute bytes
  if (sourceSize < 1)
@@ -482,9 +518,9 @@ Result Decompressor::decodeHeader(Header& header, void* source, int sourceSize, 
  int sizeCodedSize = ((attributes >> 3) & 7) + 1;
 
  // Compute the size of the header
- headerSize = 1 + 2* sizeCodedSize;
+ headerSize = 1 + 2 * sizeCodedSize;
 
- if (sourceSize < static_cast<int>(headerSize))
+ if (sourceSize < ((int)(headerSize)))
  {
   return RESULT_ERROR_BUFFER_TOO_SMALL;
  }
@@ -495,23 +531,23 @@ Result Decompressor::decodeHeader(Header& header, void* source, int sourceSize, 
  switch (sizeCodedSize)
  {
  case 1:
-  header.uncompressedSize = *reinterpret_cast<byte*>(src_p);
-  header.compressedSize = *reinterpret_cast<byte*>(src_p + sizeCodedSize);
+  header.uncompressedSize = *((byte*)(src_p));
+  header.compressedSize = *((byte*)(src_p + sizeCodedSize));
   break;
 
  case 2:
-  header.uncompressedSize = *reinterpret_cast<ushort*>(src_p);
-  header.compressedSize = *reinterpret_cast<ushort*>(src_p + sizeCodedSize);
+  header.uncompressedSize = *((ushort*)(src_p));
+  header.compressedSize = *((ushort*)(src_p + sizeCodedSize));
   break;
 
  case 4:
-  header.uncompressedSize = *reinterpret_cast<uint*>(src_p);
-  header.compressedSize = *reinterpret_cast<uint*>(src_p + sizeCodedSize);
+  header.uncompressedSize = *((uint*)(src_p));
+  header.compressedSize = *((uint*)(src_p + sizeCodedSize));
   break;
 
  case 8:
-  header.uncompressedSize = *reinterpret_cast<ulong*>(src_p);
-  header.compressedSize = *reinterpret_cast<ulong*>(src_p + sizeCodedSize);
+  header.uncompressedSize = *((ulong*)(src_p));
+  header.compressedSize = *((ulong*)(src_p + sizeCodedSize));
   break;
 
  default:
@@ -521,7 +557,7 @@ Result Decompressor::decodeHeader(Header& header, void* source, int sourceSize, 
  return RESULT_OK;
 }
 
-Result Decompressor::getCompressionInfo(void* source, int sourceSize, CompressionInfo& compressionInfo)
+Result Decompressor::getCompressionInfo(const void* source, int sourceSize, CompressionInfo& compressionInfo)
 {
  Debug.Assert(source != 0);
 
@@ -551,21 +587,33 @@ Result Decompressor::getCompressionInfo(void* source, int sourceSize, Compressio
 # 1 "..\\original\\Source\\Doboz\\Compressor.cpp" 1
 /*
 
- * Doboz Data Compression Library* Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
+ * Doboz Data Compression Library
+
+ * Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
 
  *
 
- * This software is provided 'as-is', without any express or implied warranty. In no event will* the authors be held liable for any damages arising from the use of this software.
+ * This software is provided 'as-is', without any express or implied warranty. In no event will
+
+ * the authors be held liable for any damages arising from the use of this software.
 
  *
 
- * Permission is granted to anyone to use this software for any purpose, including commercial* applications, and to alter it and redistribute it freely, subject to the following restrictions:
+ * Permission is granted to anyone to use this software for any purpose, including commercial
+
+ * applications, and to alter it and redistribute it freely, subject to the following restrictions:
 
  *
 
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the*    original software. If you use this software in a product, an acknowledgment in the product*    documentation would be appreciated but is not required.
+ * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the
 
- * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as*    being the original software.
+ *    original software. If you use this software in a product, an acknowledgment in the product
+
+ *    documentation would be appreciated but is not required.
+
+ * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as
+
+ *    being the original software.
 
  * 3. This notice may not be removed or altered from any source distribution.
 
@@ -586,21 +634,33 @@ Result Decompressor::getCompressionInfo(void* source, int sourceSize, Compressio
 # 1 "..\\original\\Source\\Doboz\\Compressor.h" 1
 /*
 
- * Doboz Data Compression Library* Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
+ * Doboz Data Compression Library
+
+ * Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
 
  *
 
- * This software is provided 'as-is', without any express or implied warranty. In no event will* the authors be held liable for any damages arising from the use of this software.
+ * This software is provided 'as-is', without any express or implied warranty. In no event will
+
+ * the authors be held liable for any damages arising from the use of this software.
 
  *
 
- * Permission is granted to anyone to use this software for any purpose, including commercial* applications, and to alter it and redistribute it freely, subject to the following restrictions:
+ * Permission is granted to anyone to use this software for any purpose, including commercial
+
+ * applications, and to alter it and redistribute it freely, subject to the following restrictions:
 
  *
 
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the*    original software. If you use this software in a product, an acknowledgment in the product*    documentation would be appreciated but is not required.
+ * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the
 
- * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as*    being the original software.
+ *    original software. If you use this software in a product, an acknowledgment in the product
+
+ *    documentation would be appreciated but is not required.
+
+ * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as
+
+ *    being the original software.
 
  * 3. This notice may not be removed or altered from any source distribution.
 
@@ -610,21 +670,33 @@ Result Decompressor::getCompressionInfo(void* source, int sourceSize, Compressio
 # 1 "..\\original\\Source\\Doboz\\Dictionary.h" 1
 /*
 
- * Doboz Data Compression Library* Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
+ * Doboz Data Compression Library
+
+ * Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
 
  *
 
- * This software is provided 'as-is', without any express or implied warranty. In no event will* the authors be held liable for any damages arising from the use of this software.
+ * This software is provided 'as-is', without any express or implied warranty. In no event will
+
+ * the authors be held liable for any damages arising from the use of this software.
 
  *
 
- * Permission is granted to anyone to use this software for any purpose, including commercial* applications, and to alter it and redistribute it freely, subject to the following restrictions:
+ * Permission is granted to anyone to use this software for any purpose, including commercial
+
+ * applications, and to alter it and redistribute it freely, subject to the following restrictions:
 
  *
 
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the*    original software. If you use this software in a product, an acknowledgment in the product*    documentation would be appreciated but is not required.
+ * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the
 
- * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as*    being the original software.
+ *    original software. If you use this software in a product, an acknowledgment in the product
+
+ *    documentation would be appreciated but is not required.
+
+ * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as
+
+ *    being the original software.
 
  * 3. This notice may not be removed or altered from any source distribution.
 
@@ -652,9 +724,9 @@ public:
 
 private:
  static const int HASH_TABLE_SIZE = 1 << 20;
- static const int CHILD_COUNT = DICTIONARY_SIZE* 2;
+ static const int CHILD_COUNT = DICTIONARY_SIZE * 2;
  static const int INVALID_POSITION = -1;
- static const int REBASE_THRESHOLD = (INT_MAX - DICTIONARY_SIZE + 1) / DICTIONARY_SIZE* DICTIONARY_SIZE; // must be a multiple of DICTIONARY_SIZE!
+ static const int REBASE_THRESHOLD = (INT_MAX - DICTIONARY_SIZE + 1) / DICTIONARY_SIZE * DICTIONARY_SIZE; // must be a multiple of DICTIONARY_SIZE!
 
  // Buffer
  byte* buffer_; // pointer to the beginning of the buffer inside which we look for matches
@@ -690,7 +762,7 @@ public:
  // The source and destination buffers must not overlap and their size must be greater than 0
  // This operation is memory safe
  // On success, returns RESULT_OK and outputs the compressed size
- Result compress(void* source, int sourceSize, void* destination, int destinationSize, int& compressedSize);
+ Result compress(const void* source, int sourceSize, void* destination, int destinationSize, int& compressedSize);
 
 private:
  detail::Dictionary dictionary_;
@@ -698,7 +770,7 @@ private:
  static int getSizeCodedSize(ulong size);
  static int getHeaderSize(ulong maxCompressedSize);
 
- Result store(void* source, int sourceSize, void* destination, int& compressedSize);
+ Result store(const void* source, int sourceSize, void* destination, int& compressedSize);
  detail::Match getBestMatch(detail::Match* matchCandidates, int matchCandidateCount);
  int encodeMatch(const detail::Match& match, void* destination);
  int getMatchCodedSize(const detail::Match& match);
@@ -712,7 +784,7 @@ namespace doboz {
 
 using namespace detail;
 
-Result Compressor::compress(void* source, int sourceSize, void* destination, int destinationSize, int& compressedSize)
+Result Compressor::compress(const void* source, int sourceSize, void* destination, int destinationSize, int& compressedSize)
 {
  Debug.Assert(source != 0);
  Debug.Assert(destination != 0);
@@ -725,14 +797,14 @@ Result Compressor::compress(void* source, int sourceSize, void* destination, int
  ulong storedSize = getMaxCompressedSize(sourceSize);
  ulong maxCompressedSize = destinationSize;
 
- byte* inputBuffer = static_cast<byte*>(source);
- byte* outputBuffer = static_cast<byte*>(destination);
+ byte* inputBuffer = ((byte*)(source));
+ byte* outputBuffer = ((byte*)(destination));
  byte* dst_end = outputBuffer + destinationSize;
  Debug.Assert((inputBuffer + sourceSize <= outputBuffer || inputBuffer >= dst_end) && "The source and destination buffers must not overlap.");
 
  // Compute the maximum output end pointer
  // We use this to determine whether we should store the data instead of compressing it
- byte* maxOutputEnd = outputBuffer + static_cast<int>(maxCompressedSize);
+ byte* maxOutputEnd = outputBuffer + ((int)(maxCompressedSize));
 
  // Allocate the header
  byte* dst_p = outputBuffer;
@@ -744,13 +816,13 @@ Result Compressor::compress(void* source, int sourceSize, void* destination, int
  // Initialize the control word which contains the literal/match bits
  // The highest bit of a control word is a guard bit, which marks the end of the bit list
  // The guard bit simplifies and speeds up the decoding process, and it
- const int controlWordBitCount = WORD_SIZE* 8 - 1;
+ const int controlWordBitCount = WORD_SIZE * 8 - 1;
  const uint controlWordGuardBit = 1u << controlWordBitCount;
  uint controlWord = controlWordGuardBit;
  int controlWordBit = 0;
 
  // Since we do not know the contents of the control words in advance, we allocate space for them and subsequently fill them with data as soon as we can
- // This is necessary because the decoder must encounter a control word*before* the literals and matches it refers to
+ // This is necessary because the decoder must encounter a control word *before* the literals and matches it refers to
  // We begin the compressed data with a control word
  byte* controlWordPointer = dst_p;
  dst_p += WORD_SIZE;
@@ -777,7 +849,7 @@ Result Compressor::compress(void* source, int sourceSize, void* destination, int
  {
   // Check whether the output is too large
   // During each iteration, we may output up to 8 bytes (2 words), and the compressed stream ends with 4 dummy bytes
-  if (dst_p + 2* WORD_SIZE + TRAILING_DUMMY_SIZE > maxOutputEnd)
+  if (dst_p + 2 * WORD_SIZE + TRAILING_DUMMY_SIZE > maxOutputEnd)
   {
 
    if (storedSize <= destinationSize)
@@ -791,7 +863,8 @@ Result Compressor::compress(void* source, int sourceSize, void* destination, int
   // Check whether the control word must be flushed
   if (controlWordBit == controlWordBitCount)
   {
-   // Flush current control word*((uint*)(controlWordPointer)) = ((uint)(controlWord));
+   // Flush current control word
+   *((uint*)(controlWordPointer)) = ((uint)(controlWord));
 
    // New control word
    controlWord = controlWordGuardBit;
@@ -811,7 +884,7 @@ Result Compressor::compress(void* source, int sourceSize, void* destination, int
 
   // If we have a match, do not immediately use it, because we may miss an even better match (lazy evaluation)
   // If encoding a literal and the next match has a higher compression ratio than encoding the current match, discard the current match
-  if (match.length > 0 && (1 + nextMatch.length) * getMatchCodedSize(match) > match.length* (1 + getMatchCodedSize(nextMatch)))
+  if (match.length > 0 && (1 + nextMatch.length) * getMatchCodedSize(match) > match.length * (1 + getMatchCodedSize(nextMatch)))
   {
    match.length = 0;
   }
@@ -849,7 +922,8 @@ Result Compressor::compress(void* source, int sourceSize, void* destination, int
   ++controlWordBit;
  }
 
- // Flush the control word*((uint*)(controlWordPointer)) = ((uint)(controlWord));
+ // Flush the control word
+ *((uint*)(controlWordPointer)) = ((uint)(controlWord));
 
  // Output trailing safety dummy bytes
  // This reduces the number of necessary buffer checks during decoding
@@ -874,9 +948,9 @@ Result Compressor::compress(void* source, int sourceSize, void* destination, int
 }
 
 // Store the source
-Result Compressor::store(void* source, int sourceSize, void* destination, int& compressedSize)
+Result Compressor::store(const void* source, int sourceSize, void* destination, int& compressedSize)
 {
- byte* outputBuffer = static_cast<byte*>(destination);
+ byte* outputBuffer = ((byte*)(destination));
  byte* dst_p = outputBuffer;
 
  // Encode the header
@@ -928,8 +1002,8 @@ int Compressor::encodeMatch(const Match& match, void* destination)
  uint word;
  int size;
 
- uint lengthCode = static_cast<uint>(match.length - MIN_MATCH_LENGTH);
- uint offsetCode = static_cast<uint>(match.offset);
+ uint lengthCode = ((uint)(match.length - MIN_MATCH_LENGTH));
+ uint offsetCode = ((uint)(match.offset));
 
  if (lengthCode == 0 && offsetCode < 64)
  {
@@ -992,14 +1066,14 @@ int Compressor::getSizeCodedSize(ulong size)
 
 int Compressor::getHeaderSize(ulong maxCompressedSize)
 {
- return 1 + 2* getSizeCodedSize(maxCompressedSize);
+ return 1 + 2 * getSizeCodedSize(maxCompressedSize);
 }
 
 void Compressor::encodeHeader(const Header& header, ulong maxCompressedSize, void* destination)
 {
  Debug.Assert(header.version < 8);
 
- byte* dst_p = static_cast<byte*>(destination);
+ byte* dst_p = ((byte*)(destination));
 
  // Encode the attribute byte
  uint attributes = header.version;
@@ -1012,29 +1086,29 @@ void Compressor::encodeHeader(const Header& header, ulong maxCompressedSize, voi
   attributes |= 128;
  }
 
- dst[dst_p++] = static_cast<byte>(attributes);
+ dst[dst_p++] = ((byte)(attributes));
 
  // Encode the uncompressed and compressed sizes
  switch (sizeCodedSize)
  {
  case 1:
-  *reinterpret_cast<byte*>(dst_p) = static_cast<byte>(header.uncompressedSize);
-  *reinterpret_cast<byte*>(dst_p + sizeCodedSize) = static_cast<byte>(header.compressedSize);
+  *((byte*)(dst_p)) = ((byte)(header.uncompressedSize));
+  *((byte*)(dst_p + sizeCodedSize)) = ((byte)(header.compressedSize));
   break;
 
  case 2:
-  *reinterpret_cast<ushort*>(dst_p) = static_cast<ushort>(header.uncompressedSize);
-  *reinterpret_cast<ushort*>(dst_p + sizeCodedSize) = static_cast<ushort>(header.compressedSize);
+  *((ushort*)(dst_p)) = ((ushort)(header.uncompressedSize));
+  *((ushort*)(dst_p + sizeCodedSize)) = ((ushort)(header.compressedSize));
   break;
 
  case 4:
-  *reinterpret_cast<uint*>(dst_p) = static_cast<uint>(header.uncompressedSize);
-  *reinterpret_cast<uint*>(dst_p + sizeCodedSize) = static_cast<uint>(header.compressedSize);
+  *((uint*)(dst_p)) = ((uint)(header.uncompressedSize));
+  *((uint*)(dst_p + sizeCodedSize)) = ((uint)(header.compressedSize));
   break;
 
  case 8:
-  *reinterpret_cast<ulong*>(dst_p) = header.uncompressedSize;;
-  *reinterpret_cast<ulong*>(dst_p + sizeCodedSize) = header.compressedSize;
+  *((ulong*)(dst_p)) = header.uncompressedSize;;
+  *((ulong*)(dst_p + sizeCodedSize)) = header.compressedSize;
   break;
  }
 }
@@ -1050,21 +1124,33 @@ ulong Compressor::getMaxCompressedSize(ulong size)
 # 1 "..\\original\\Source\\Doboz\\Dictionary.cpp" 1
 /*
 
- * Doboz Data Compression Library* Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
+ * Doboz Data Compression Library
+
+ * Copyright (C) 2010-2011 Attila T. Afra <attila.afra@gmail.com>
 
  *
 
- * This software is provided 'as-is', without any express or implied warranty. In no event will* the authors be held liable for any damages arising from the use of this software.
+ * This software is provided 'as-is', without any express or implied warranty. In no event will
+
+ * the authors be held liable for any damages arising from the use of this software.
 
  *
 
- * Permission is granted to anyone to use this software for any purpose, including commercial* applications, and to alter it and redistribute it freely, subject to the following restrictions:
+ * Permission is granted to anyone to use this software for any purpose, including commercial
+
+ * applications, and to alter it and redistribute it freely, subject to the following restrictions:
 
  *
 
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the*    original software. If you use this software in a product, an acknowledgment in the product*    documentation would be appreciated but is not required.
+ * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the
 
- * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as*    being the original software.
+ *    original software. If you use this software in a product, an acknowledgment in the product
+
+ *    documentation would be appreciated but is not required.
+
+ * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as
+
+ *    being the original software.
 
  * 3. This notice may not be removed or altered from any source distribution.
 
@@ -1157,7 +1243,7 @@ int Dictionary::findMatches(Match* matchCandidates)
  }
 
  // Compute the maximum match length
- int maxMatchLength = static_cast<int>(std::min(bufferLength_ - TAIL_LENGTH - absolutePosition_, static_cast<int>(MAX_MATCH_LENGTH)));
+ int maxMatchLength = ((int)(std::min(bufferLength_ - TAIL_LENGTH - absolutePosition_, ((int)(MAX_MATCH_LENGTH)))));
 
  // Compute the position relative to the beginning of bufferBase_
  // All other positions (including the ones stored in the hash table and the binary trees) are relative too
@@ -1180,8 +1266,8 @@ int Dictionary::findMatches(Match* matchCandidates)
  int cyclicInputPosition = position % DICTIONARY_SIZE;
 
  // Initialize the references to the leaves of the new root's left and right subtrees
- int leftSubtreeLeaf = cyclicInputPosition* 2;
- int rightSubtreeLeaf = cyclicInputPosition* 2 + 1;
+ int leftSubtreeLeaf = cyclicInputPosition * 2;
+ int rightSubtreeLeaf = cyclicInputPosition * 2 + 1;
 
  // Initialize the match lenghts of the lower and upper bounds of the current string (lowMatch < match < highMatch)
  // We use these to avoid unneccesary character comparisons at the beginnings of the strings
@@ -1245,8 +1331,8 @@ int Dictionary::findMatches(Match* matchCandidates)
    if (matchLength == maxMatchLength)
    {
     // Since the current string is also the root of the tree, delete the current node
-    children_[leftSubtreeLeaf] = children_[cyclicMatchPosition* 2];
-    children_[rightSubtreeLeaf] = children_[cyclicMatchPosition* 2 + 1];
+    children_[leftSubtreeLeaf] = children_[cyclicMatchPosition * 2];
+    children_[rightSubtreeLeaf] = children_[cyclicMatchPosition * 2 + 1];
     break;
    }
   }
@@ -1258,7 +1344,7 @@ int Dictionary::findMatches(Match* matchCandidates)
    children_[rightSubtreeLeaf] = matchPosition;
 
    // Go left
-   rightSubtreeLeaf = cyclicMatchPosition* 2;
+   rightSubtreeLeaf = cyclicMatchPosition * 2;
    matchPosition = children_[rightSubtreeLeaf];
 
    // Update the match length of the high bound
@@ -1270,7 +1356,7 @@ int Dictionary::findMatches(Match* matchCandidates)
    children_[leftSubtreeLeaf] = matchPosition;
 
    // Go right
-   leftSubtreeLeaf = cyclicMatchPosition* 2 + 1;
+   leftSubtreeLeaf = cyclicMatchPosition * 2 + 1;
    matchPosition = children_[leftSubtreeLeaf];
 
    // Update the match length of the low bound
@@ -1287,7 +1373,7 @@ int Dictionary::findMatches(Match* matchCandidates)
 // Increments the match window position with one character
 int Dictionary::computeRelativePosition()
 {
- int position = static_cast<int>(absolutePosition_ - (bufferBase_ - buffer_));
+ int position = ((int)(absolutePosition_ - (bufferBase_ - buffer_)));
 
  // Check whether the current position has reached the rebase threshold
  if (position == REBASE_THRESHOLD)
