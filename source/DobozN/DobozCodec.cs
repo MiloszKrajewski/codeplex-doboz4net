@@ -5,7 +5,8 @@ using System.Text;
 
 namespace DobozN
 {
-    public class Class1
+    public class DobozCodec
     {
+
     }
 }
