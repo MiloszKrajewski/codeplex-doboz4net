@@ -6,6 +6,8 @@
 #define uint64_t ulong
 #define int32_t int
 #define uint32_t uint
+#define int16_t short
+#define uint16_t ushort
 #define int8_t sbyte
 #define uint8_t byte
 #define UCHAR_MAX byte.MaxValue
@@ -15,6 +17,7 @@
 #define outputIterator dst_p
 #define inputIterator src_p
 #define outputEnd dst_end
+#define inputEnd src_end
 
 #define assert(c) Debug.Assert(c)
 #define fastRead(s,l) PeekN_##l(s)

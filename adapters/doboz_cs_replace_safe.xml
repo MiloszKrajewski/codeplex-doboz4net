@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rx>
+	<macro name="ident" text="[a-zA-Z0-9_]+"/>
+	<replace text="const byte* const" with="int" rerun="false"/>
+	<replace text="const byte*" with="int" rerun="false"/>
+	<replace text="byte* const" with="int" rerun="false"/>
+	<replace text="byte*" with="int" rerun="false"/>
+	<replace rx="true" text="for\s*\(\s*;\s*;\s*\)" with="while (true)"/>
+	<replace text="while (1)" with="while (true)"/>
+	
+	<!-- trailing spaces -->
+	<replace rx="true" rerun="true">
+		<text><![CDATA[[\x20\t]*(?<eol>\r?\n)]]></text>
+		<with escaped="true">\r\n</with>
+	</replace>
+	
+	<!-- multiple line breaks -->
+	<replace rx="true" rerun="true">
+		<text><![CDATA[(?<eol>\r?\n\r?\n)(\r?\n)+]]></text>
+		<with escaped="true">\r\n\r\n</with>
+	</replace>
+	
+    <!-- empty braces -->
+	<replace rx="true">
+		<text>\{\s*\}</text>
+		<with>{ /* do nothing */ }</with>
+	</replace>
+	
+	<replace rx="true">
+		<text><![CDATA[Peek4\(_,\s*(?<i1>(?<prefix>xxx|src|dst)_$(ident).*?)\)]]></text>
+		<with><![CDATA[Peek4($(prefix), $(i1))]]></with>
+	</replace>
+	
+	<replace rx="true">
+		<text><![CDATA[\*(?<name>(?<prefix>(xxx|dst|src))_($(ident))(\+\+|\-\-))]]></text>
+		<with><![CDATA[$(prefix)[$(name)]]]></with>
+	</replace>
+
+	<replace rx="true">
+		<text><![CDATA[dst_p\[(?<i1>\d+)\]\s*=\s*xxx_ref\[(?<i2>\d+)\];]]></text>
+		<with><![CDATA[dst[dst_p + $(i1)] = dst[dst_ref + $(i2)];]]></with>
+	</replace>
+</rx>
