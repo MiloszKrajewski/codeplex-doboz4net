@@ -1,7 +1,7 @@
 # 1 "doboz_cs_adapter.h"
 # 1 "<command-line>"
 # 1 "doboz_cs_adapter.h"
-# 47 "doboz_cs_adapter.h"
+# 50 "doboz_cs_adapter.h"
 //---- Decompressor ----------------------------------------------------------
 
 # 1 "..\\original\\Source\\Doboz\\Decompressor.cpp" 1
@@ -270,13 +270,13 @@ Result Decompressor::decompress(const void* source, int sourceSize, void* destin
  Debug.Assert(source != 0);
  Debug.Assert(destination != 0);
 
- int inputBuffer = static_cast<int>(source);
- int src_p = inputBuffer;
+ int src = static_cast<int>(source);
+ int src_p = src;
 
- int outputBuffer = static_cast<int>(destination);
- int dst_p = outputBuffer;
+ int dst = static_cast<int>(destination);
+ int dst_p = dst;
 
- Debug.Assert((inputBuffer + sourceSize <= outputBuffer || inputBuffer >= outputBuffer + destinationSize) && "The source and destination buffers must not overlap.")
+ Debug.Assert((src + sourceSize <= dst || src >= dst + destinationSize) && "The source and destination buffers must not overlap.")
                                                          ;
 
  // Decode the header
@@ -307,16 +307,16 @@ Result Decompressor::decompress(const void* source, int sourceSize, void* destin
  // If the data is simply stored, copy it to the destination buffer and we're done
  if (header.isStored)
  {
-  memcpy(outputBuffer, src_p, uncompressedSize);
+  memcpy(dst, src_p, uncompressedSize);
   return RESULT_OK;
  }
 
- int src_end = inputBuffer + static_cast<int>(header.compressedSize);
- int dst_end = outputBuffer + uncompressedSize;
+ int src_end = src + static_cast<int>(header.compressedSize);
+ int dst_end = dst + uncompressedSize;
 
  // Compute pointer to the first byte of the output 'tail'
  // Fast write operations can be used only before the tail, because those may write beyond the end of the output buffer
- int outputTail = (uncompressedSize > TAIL_LENGTH) ? (dst_end - TAIL_LENGTH) : outputBuffer;
+ int outputTail = (uncompressedSize > TAIL_LENGTH) ? (dst_end - TAIL_LENGTH) : dst;
 
  // Initialize the control word to 'empty'
  uint controlWord = 1;
@@ -356,8 +356,8 @@ Result Decompressor::decompress(const void* source, int sourceSize, void* destin
     Poke4(xxx, (uint)(Peek4(xxx, src_p)));
 
     // Get the run length using a lookup table
-    static const sbyte literalRunLengthTable[16] = {4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0};
-    int runLength = literalRunLengthTable[controlWord & 0xf];
+    static const sbyte LITERAL_RUN_LENGTH_TABLE[16] = {4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0};
+    int runLength = LITERAL_RUN_LENGTH_TABLE[controlWord & 0xf];
 
     // Advance the inputBuffer and outputBuffer pointers with the run length
     src_p += runLength;
@@ -416,7 +416,7 @@ Result Decompressor::decompress(const void* source, int sourceSize, void* destin
    int matchString = dst_p - match.offset;
 
    // Check whether the match is out of range
-   if (matchString < outputBuffer || dst_p + match.length > outputTail)
+   if (matchString < dst || dst_p + match.length > outputTail)
    {
     return RESULT_ERROR_CORRUPTED_DATA;
    }
@@ -429,7 +429,7 @@ Result Decompressor::decompress(const void* source, int sourceSize, void* destin
     // In order to correctly handle the overlap, we have to copy the first three bytes one by one
     do
     {
-     Debug.Assert(matchString + i >= outputBuffer);
+     Debug.Assert(matchString + i >= dst);
      Debug.Assert(matchString + i + WORD_SIZE <= dst_end);
      Debug.Assert(dst_p + i + WORD_SIZE <= dst_end);
      xxx[dst_p + i] = ((byte)(xxx[matchString + i]));
@@ -447,7 +447,7 @@ Result Decompressor::decompress(const void* source, int sourceSize, void* destin
 
    do
    {
-    Debug.Assert(matchString + i >= outputBuffer);
+    Debug.Assert(matchString + i >= dst);
     Debug.Assert(matchString + i + WORD_SIZE <= dst_end);
     Debug.Assert(dst_p + i + WORD_SIZE <= dst_end);
     Poke4(xxx, (uint)(Peek4(xxx, matchString + i)));
@@ -580,7 +580,7 @@ Result Decompressor::getCompressionInfo(const void* source, int sourceSize, Comp
 }
 
 }
-# 50 "doboz_cs_adapter.h" 2
+# 53 "doboz_cs_adapter.h" 2
 
 //---- Compressor ------------------------------------------------------------
 
@@ -797,21 +797,21 @@ Result Compressor::compress(const void* source, int sourceSize, void* destinatio
  ulong storedSize = getMaxCompressedSize(sourceSize);
  ulong maxCompressedSize = destinationSize;
 
- int inputBuffer = static_cast<int>(source);
- int outputBuffer = static_cast<int>(destination);
- int dst_end = outputBuffer + destinationSize;
- Debug.Assert((inputBuffer + sourceSize <= outputBuffer || inputBuffer >= dst_end) && "The source and destination buffers must not overlap.");
+ int src = static_cast<int>(source);
+ int dst = static_cast<int>(destination);
+ int dst_end = dst + destinationSize;
+ Debug.Assert((src + sourceSize <= dst || src >= dst_end) && "The source and destination buffers must not overlap.");
 
  // Compute the maximum output end pointer
  // We use this to determine whether we should store the data instead of compressing it
- int maxOutputEnd = outputBuffer + static_cast<int>(maxCompressedSize);
+ int maxOutputEnd = dst + static_cast<int>(maxCompressedSize);
 
  // Allocate the header
- int dst_p = outputBuffer;
+ int dst_p = dst;
  dst_p += getHeaderSize(maxCompressedSize);
 
  // Initialize the dictionary
- dictionary_.setBuffer(inputBuffer, sourceSize);
+ dictionary_.setBuffer(src, sourceSize);
 
  // Initialize the control word which contains the literal/match bits
  // The highest bit of a control word is a guard bit, which marks the end of the bit list
@@ -897,7 +897,7 @@ Result Compressor::compress(const void* source, int sourceSize, void* destinatio
 
    // The current dictionary position is now two characters ahead of the literal to encode
    Debug.Assert(dst_p + 1 <= dst_end);
-   xxx[dst_p] = ((byte)(inputBuffer[dictionary_.position() - 2]));
+   xxx[dst_p] = ((byte)(src[dictionary_.position() - 2]));
    ++dst_p;
   }
   else
@@ -932,7 +932,7 @@ Result Compressor::compress(const void* source, int sourceSize, void* destinatio
  dst_p += TRAILING_DUMMY_SIZE;
 
  // Done, compute the compressed size
- compressedSize = dst_p - outputBuffer;
+ compressedSize = dst_p - dst;
 
  // Encode the header
  Header header;
@@ -941,7 +941,7 @@ Result Compressor::compress(const void* source, int sourceSize, void* destinatio
  header.uncompressedSize = sourceSize;
  header.compressedSize = compressedSize;
 
- encodeHeader(header, maxCompressedSize, outputBuffer);
+ encodeHeader(header, maxCompressedSize, dst);
 
  // Return the compressed size
  return RESULT_OK;
@@ -950,8 +950,8 @@ Result Compressor::compress(const void* source, int sourceSize, void* destinatio
 // Store the source
 Result Compressor::store(const void* source, int sourceSize, void* destination, int& compressedSize)
 {
- int outputBuffer = static_cast<int>(destination);
- int dst_p = outputBuffer;
+ int dst = static_cast<int>(destination);
+ int dst_p = dst;
 
  // Encode the header
  ulong maxCompressedSize = getMaxCompressedSize(sourceSize);
@@ -1120,7 +1120,7 @@ ulong Compressor::getMaxCompressedSize(ulong size)
 }
 
 } // namespace doboz
-# 54 "doboz_cs_adapter.h" 2
+# 57 "doboz_cs_adapter.h" 2
 # 1 "..\\original\\Source\\Doboz\\Dictionary.cpp" 1
 /*
 
@@ -1422,4 +1422,4 @@ uint Dictionary::hash(int data)
 
 } // namespace detail
 } // namespace doboz
-# 55 "doboz_cs_adapter.h" 2
+# 58 "doboz_cs_adapter.h" 2

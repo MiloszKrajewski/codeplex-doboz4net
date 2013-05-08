@@ -19,3 +19,8 @@ source/ipch/*
 source/libDoboz/obj/*
 *.nupkg
 *.opensdf
+*.user
+
+*.suo
+
+*.sdf

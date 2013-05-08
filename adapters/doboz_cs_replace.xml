@@ -5,27 +5,32 @@
 	<macro name="string"><text><![CDATA["(([^"\\])|($(esc)))*"]]></text></macro>
 	<macro name="char"><text><![CDATA['(([^'\\])|($(esc)))']]></text></macro>
 	
-	<macro name="rbracket"><text><![CDATA[\((?<rexpr>(?>\((?<RDEPTH>)|\)(?<-RDEPTH>)|[^()]?)*(?(RDEPTH)(?!)))\)]]></text></macro>
-	<macro name="qbracket"><text><![CDATA[\[(?<qexpr>(?>\[(?<QDEPTH>)|\](?<-QDEPTH>)|[^\[\]]?)*(?(QDEPTH)(?!)))\]]]></text></macro>
-	<macro name="tbracket"><text><![CDATA[\<(?<texpr>(?>\<(?<RDEPTH>)|\>(?<-RDEPTH>)|[^<>]?)*(?(RDEPTH)(?!)))\>]]></text></macro>
+	<macro name="rbracket"><text><![CDATA[\((?<rexpr>(?>\((?<RDEPTH>)|\)(?<-RDEPTH>)|($(string))|($(char))|[^()]?)*(?(RDEPTH)(?!)))\)]]></text></macro>
+	<macro name="qbracket"><text><![CDATA[\[(?<qexpr>(?>\[(?<QDEPTH>)|\](?<-QDEPTH>)|($(string))|($(char))|[^\[\]]?)*(?(QDEPTH)(?!)))\]]]></text></macro>
+	<macro name="tbracket"><text><![CDATA[\<(?<texpr>(?>\<(?<RDEPTH>)|\>(?<-RDEPTH>)|($(string))|($(char))|[^<>]?)*(?(RDEPTH)(?!)))\>]]></text></macro>
 	
-	<macro name="type" text="byte|sbyte|int|uint|short|ushort|long|ulong|char"/>
+	<macro name="type" text="byte|sbyte|int|uint|short|ushort|long|ulong|char|void"/>
 	
-	<replace rx="true"  with="$(name)*" rerun="false">
+	<replace rx="true" with="$(name)*" rerun="false">
 		<text><![CDATA[(const\s+)?(?<name>$(type))\s*\*(\s+const)?]]></text>
+	</replace>
+	
+	<replace rx="true" text="void\s*\*" with="byte*" rerun="false"/>
+	
+	<replace rx="true" rerun="true">
+		<text><![CDATA[\s*\=\s*$(rbracket)\s*;]]></text>
+		<with> = $(rexpr);</with>
+	</replace>
+	
+	<replace rx="true" rerun="true">
+		<text><![CDATA[\(\s*$(rbracket)\s*\)]]></text>
+		<with>($(rexpr))</with>
 	</replace>
 	
 	<replace rx="true">
 		<text><![CDATA[(reinterpret_cast|static_cast)\s*$(tbracket)\s*$(rbracket)]]></text>
 		<with>(($(texpr))($(rexpr)))</with>
 	</replace>
-
-	<!--
-	<replace rx="true">
-		<text><![CDATA[static_cast<(?<name>$(ident))>]]></text>
-		<with>($(name))</with>
-	</replace>
-	-->
 
 	<replace rx="true" text="for\s*\(\s*;\s*;\s*\)" with="while (true)"/>
 	<replace rx="true" text="while\s*\(\s*1\s*\)" with="while (true)"/>
@@ -46,20 +51,5 @@
 	<replace rx="true">
 		<text>\{\s*\}</text>
 		<with>{ /* do nothing */ }</with>
-	</replace>
-	
-	<replace rx="true">
-		<text><![CDATA[Peek4\(_,\s*(?<i1>(?<prefix>xxx|src|dst)_$(ident).*?)\)]]></text>
-		<with><![CDATA[Peek4($(prefix), $(i1))]]></with>
-	</replace>
-	
-	<replace rx="true">
-		<text><![CDATA[\*(?<name>(?<prefix>(xxx|dst|src))_($(ident))(\+\+|\-\-))]]></text>
-		<with><![CDATA[$(prefix)[$(name)]]]></with>
-	</replace>
-
-	<replace rx="true">
-		<text><![CDATA[dst_p\[(?<i1>\d+)\]\s*=\s*xxx_ref\[(?<i2>\d+)\];]]></text>
-		<with><![CDATA[dst[dst_p + $(i1)] = dst[dst_ref + $(i2)];]]></with>
 	</replace>
 </rx>

@@ -18,6 +18,9 @@
 #define inputIterator src_p
 #define outputEnd dst_end
 #define inputEnd src_end
+#define inputBuffer src
+#define outputBuffer dst
+#define literalRunLengthTable LITERAL_RUN_LENGTH_TABLE
 
 #define assert(c) Debug.Assert(c)
 #define fastRead(s,l) PeekN_##l(s)
