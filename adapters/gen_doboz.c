@@ -176,7 +176,7 @@ const int TRAILING_DUMMY_SIZE = WORD_SIZE; // safety trailing bytes which decrea
 
 // Reads up to 4 bytes and returns them in a word
 // WARNING: May read more bytes than requested!
-inline uint PeekN_size_t size(void* source)
+inline uint PeekN_size_t size(byte* source)
 {
  Debug.Assert(size <= WORD_SIZE);
 
@@ -201,7 +201,7 @@ inline uint PeekN_size_t size(void* source)
 
 // Writes up to 4 bytes specified in a word
 // WARNING: May write more bytes than requested!
-inline void PokeN_size_t size(void* destination,uint word)
+inline void PokeN_size_t size(byte* destination,uint word)
 {
  Debug.Assert(size <= WORD_SIZE);
 
@@ -246,16 +246,16 @@ public:
  // The source and destination buffers must not overlap
  // This operation is memory safe
  // On success, returns RESULT_OK
- Result decompress(void* source, int sourceSize, void* destination, int destinationSize);
+ Result decompress(byte* source, int sourceSize, byte* destination, int destinationSize);
 
  // Retrieves information about a compressed block of data
  // This operation is memory safe
  // On success, returns RESULT_OK and outputs the compression information
- Result getCompressionInfo(void* source, int sourceSize, CompressionInfo& compressionInfo);
+ Result getCompressionInfo(byte* source, int sourceSize, CompressionInfo& compressionInfo);
 
 private:
- int decodeMatch(detail::Match& match, void* source);
- Result decodeHeader(detail::Header& header, void* source, int sourceSize, int& headerSize);
+ int decodeMatch(detail::Match& match, byte* source);
+ Result decodeHeader(detail::Header& header, byte* source, int sourceSize, int& headerSize);
 };
 
 } // namespace doboz
@@ -265,7 +265,7 @@ namespace doboz {
 
 using namespace detail;
 
-Result Decompressor::decompress(void* source, int sourceSize, void* destination, int destinationSize)
+Result Decompressor::decompress(byte* source, int sourceSize, byte* destination, int destinationSize)
 {
  Debug.Assert(source != 0);
  Debug.Assert(destination != 0);
@@ -464,7 +464,7 @@ Result Decompressor::decompress(void* source, int sourceSize, void* destination,
 }
 
 // Decodes a match and returns its size in bytes
-inline int Decompressor::decodeMatch(Match& match, void* source)
+inline int Decompressor::decodeMatch(Match& match, byte* source)
 {
  // Use a decoding lookup table in order to avoid expensive branches
  static const struct
@@ -502,7 +502,7 @@ inline int Decompressor::decodeMatch(Match& match, void* source)
 
 // Decodes a header and returns its size in bytes
 // If the header is not valid, the function returns 0
-Result Decompressor::decodeHeader(Header& header, void* source, int sourceSize, int& headerSize)
+Result Decompressor::decodeHeader(Header& header, byte* source, int sourceSize, int& headerSize)
 {
  byte* src_p = (byte*)(source);
 
@@ -557,7 +557,7 @@ Result Decompressor::decodeHeader(Header& header, void* source, int sourceSize, 
  return RESULT_OK;
 }
 
-Result Decompressor::getCompressionInfo(void* source, int sourceSize, CompressionInfo& compressionInfo)
+Result Decompressor::getCompressionInfo(byte* source, int sourceSize, CompressionInfo& compressionInfo)
 {
  Debug.Assert(source != 0);
 
@@ -762,7 +762,7 @@ public:
  // The source and destination buffers must not overlap and their size must be greater than 0
  // This operation is memory safe
  // On success, returns RESULT_OK and outputs the compressed size
- Result compress(void* source, int sourceSize, void* destination, int destinationSize, int& compressedSize);
+ Result compress(byte* source, int sourceSize, byte* destination, int destinationSize, int& compressedSize);
 
 private:
  detail::Dictionary dictionary_;
@@ -770,11 +770,11 @@ private:
  static int getSizeCodedSize(ulong size);
  static int getHeaderSize(ulong maxCompressedSize);
 
- Result store(void* source, int sourceSize, void* destination, int& compressedSize);
+ Result store(byte* source, int sourceSize, byte* destination, int& compressedSize);
  detail::Match getBestMatch(detail::Match* matchCandidates, int matchCandidateCount);
- int encodeMatch(const detail::Match& match, void* destination);
+ int encodeMatch(const detail::Match& match, byte* destination);
  int getMatchCodedSize(const detail::Match& match);
- void encodeHeader(const detail::Header& header, ulong maxCompressedSize, void* destination);
+ void encodeHeader(const detail::Header& header, ulong maxCompressedSize, byte* destination);
 };
 
 } // namespace doboz
@@ -784,7 +784,7 @@ namespace doboz {
 
 using namespace detail;
 
-Result Compressor::compress(void* source, int sourceSize, void* destination, int destinationSize, int& compressedSize)
+Result Compressor::compress(byte* source, int sourceSize, byte* destination, int destinationSize, int& compressedSize)
 {
  Debug.Assert(source != 0);
  Debug.Assert(destination != 0);
@@ -948,7 +948,7 @@ Result Compressor::compress(void* source, int sourceSize, void* destination, int
 }
 
 // Store the source
-Result Compressor::store(void* source, int sourceSize, void* destination, int& compressedSize)
+Result Compressor::store(byte* source, int sourceSize, byte* destination, int& compressedSize)
 {
  byte* dst = (byte*)(destination);
  byte* dst_p = dst;
@@ -994,7 +994,7 @@ Match Compressor::getBestMatch(Match* matchCandidates, int matchCandidateCount)
  return bestMatch;
 }
 
-int Compressor::encodeMatch(const Match& match, void* destination)
+int Compressor::encodeMatch(const Match& match, byte* destination)
 {
  Debug.Assert(match.length <= MAX_MATCH_LENGTH);
  Debug.Assert(match.length == 0 || match.offset < DICTIONARY_SIZE);
@@ -1069,7 +1069,7 @@ int Compressor::getHeaderSize(ulong maxCompressedSize)
  return 1 + 2 * getSizeCodedSize(maxCompressedSize);
 }
 
-void Compressor::encodeHeader(const Header& header, ulong maxCompressedSize, void* destination)
+void Compressor::encodeHeader(const Header& header, ulong maxCompressedSize, byte* destination)
 {
  Debug.Assert(header.version < 8);
 
