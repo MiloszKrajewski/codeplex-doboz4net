@@ -1,4 +1,8 @@
-﻿namespace DobozN
+﻿#if DOBOZ_SAFE
+namespace DobozS
+#else
+namespace DobozN
+#endif
 {
 	public partial class DobozCodec: DobozDecoder
 	{
