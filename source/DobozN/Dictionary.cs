@@ -1,4 +1,9 @@
-﻿using System;
+﻿#if !DOBOZ_UNSAFE
+// by default it is always safe (it's... safer?) :-)
+#define DOBOZ_SAFE
+#endif
+
+using System;
 using System.Diagnostics;
 
 #if DOBOZ_SAFE

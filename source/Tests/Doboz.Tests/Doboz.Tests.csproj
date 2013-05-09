@@ -65,7 +65,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="ConformanceTests.cs" />
+    <Compile Include="PerformanceTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Common.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DobozMM\DobozMM.vcxproj">
@@ -83,6 +88,10 @@
     <ProjectReference Include="..\..\Doboz\Doboz.csproj">
       <Project>{0964331f-d737-4911-a387-fecc7a07bd5f}</Project>
       <Name>Doboz</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Doboz.Tests.Utilities\Doboz.Tests.Utilities.csproj">
+      <Project>{4158ba96-a5b6-4307-ae99-de9c35ed9055}</Project>
+      <Name>Doboz.Tests.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
