@@ -4,6 +4,8 @@ namespace DobozN
 {
 	public partial class DobozCodec
 	{
+		#region private implementation
+
 		// Store the source
 		private static unsafe Result Store(byte* source, int sourceSize, byte* destination, out int compressedSize)
 		{
@@ -316,5 +318,7 @@ namespace DobozN
 
 			return size;
 		}
+
+		#endregion
 	}
 }

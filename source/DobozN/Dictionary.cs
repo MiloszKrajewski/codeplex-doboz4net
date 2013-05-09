@@ -4,6 +4,8 @@ namespace DobozN
 {
 	internal partial class Dictionary
 	{
+		#region consts
+
 		private const int DICTIONARY_SIZE = DobozCodec.DICTIONARY_SIZE;
 		private const int TAIL_LENGTH = DobozDecoder.TAIL_LENGTH;
 		private const int MIN_MATCH_LENGTH = DobozDecoder.MIN_MATCH_LENGTH;
@@ -16,6 +18,11 @@ namespace DobozN
 		private const int REBASE_THRESHOLD = (int.MaxValue - DICTIONARY_SIZE + 1) / DICTIONARY_SIZE * DICTIONARY_SIZE; // must be a multiple of DICTIONARY_SIZE!
 		private const int REBASE_DELTA = REBASE_THRESHOLD - DICTIONARY_SIZE;
 
+		#endregion
+
+		#region fields
+
+		// note: this one is public for performance reasons
 		public int Position; // position from the beginning of buffer_
 
 		private readonly int _bufferLength;
@@ -24,6 +31,8 @@ namespace DobozN
 		// Cyclic dictionary
 		private readonly int[] _hashTable; // relative match positions to bufferBase_
 		private readonly int[] _children; // children of the binary tree nodes (relative match positions to bufferBase_)
+
+		#endregion
 
 		private Dictionary()
 		{

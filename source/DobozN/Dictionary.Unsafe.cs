@@ -5,8 +5,14 @@ namespace DobozN
 {
 	internal unsafe partial class Dictionary
 	{
+		#region fields
+
 		private readonly byte* _buffer; // pointer to the beginning of the buffer inside which we look for matches
 		private byte* _bufferBase; // bufferBase_ > buffer_, relative positions are necessary to support > 2 GB buffers
+
+		#endregion
+
+		#region constructor
 
 		public Dictionary(byte* buffer, int bufferLength)
 			: this()
@@ -37,6 +43,15 @@ namespace DobozN
 				// Clear the hash table
 				for (var i = 0; i < HASH_TABLE_SIZE; ++i) ht[i] = INVALID_POSITION;
 			}
+		}
+
+		#endregion
+
+		#region public interface
+
+		public void Skip()
+		{
+			FindMatches(null);
 		}
 
 		// Finds match candidates at the current buffer position and slides the matching window to the next character
@@ -188,6 +203,10 @@ namespace DobozN
 			}
 		}
 
+		#endregion
+
+		#region private implementation
+
 		// Increments the match window position with one character
 		private int ComputeRelativePosition()
 		{
@@ -219,11 +238,6 @@ namespace DobozN
 			}
 		}
 
-		public void Skip()
-		{
-			FindMatches(null);
-		}
-
 		private static uint Hash(byte* data)
 		{
 			// FNV-1a hash
@@ -236,5 +250,7 @@ namespace DobozN
 
 			return result;
 		}
+
+		#endregion
 	}
 }

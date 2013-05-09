@@ -6,6 +6,8 @@ namespace DobozN
 {
 	public partial class DobozCodec
 	{
+		#region public interface
+
 		public static unsafe int Encode(
 			byte[] input, int inputOffset, int inputLength,
 			byte[] output, int outputOffset, int outputLength)
@@ -58,6 +60,8 @@ namespace DobozN
 				return output;
 			}
 		}
+
+		#endregion
 	}
 }
 
