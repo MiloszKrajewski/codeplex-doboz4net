@@ -47,8 +47,8 @@ namespace Doboz.Tests
 		private static void TestCompression(byte[] input)
 		{
 			var length = input.Length;
-			var compressed = DobozMM.DobozCodec.Encode(input, 0, length);
-			var decompressed = DobozN.DobozCodec.Decode(compressed, 0, compressed.Length);
+			var compressed = DobozN.DobozCodec.Encode(input, 0, length);
+			var decompressed = DobozMM.DobozCodec.Decode(compressed, 0, compressed.Length);
 			Assert.AreEqual(length, decompressed.Length);
 			for (var i = 0; i < length; i++) Assert.AreEqual(input[i], decompressed[i]);
 		}

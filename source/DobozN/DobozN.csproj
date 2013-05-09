@@ -41,9 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dictionary.Unsafe.cs" />
     <Compile Include="DobozCodec.Unsafe.cs" />
     <Compile Include="DobozCodec.Unsafe.Dirty.cs" />
+    <Compile Include="Dictionary.cs" />
     <Compile Include="DobozCodec.cs" />
+    <Compile Include="DobozDecoder.Unsafe.cs" />
+    <Compile Include="DobozDecoder.Unsafe.Dirty.cs" />
+    <Compile Include="DobozDecoder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

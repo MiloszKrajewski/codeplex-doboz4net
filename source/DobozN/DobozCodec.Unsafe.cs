@@ -1,69 +1,64 @@
-﻿using System.Diagnostics;
-using System;
+﻿using System;
+
+// ReSharper disable InconsistentNaming
 
 namespace DobozN
 {
 	public partial class DobozCodec
 	{
-		public unsafe static int Decode(
+		public static unsafe int Encode(
 			byte[] input, int inputOffset, int inputLength,
 			byte[] output, int outputOffset, int outputLength)
 		{
-			/*
 			CheckArguments(
-				input, inputOffset, inputLength,
-				output, outputOffset, outputLength);
-			*/
+				input, inputOffset, ref inputLength,
+				output, outputOffset, ref outputLength);
 
-			fixed (byte* src = &input[inputOffset])
+			fixed (byte* input_p = &input[inputOffset])
+			fixed (byte* output_p = &output[outputOffset])
 			{
-				CompressionInfo info = new CompressionInfo();
-				if (GetCompressionInfo(src, inputLength, ref info) != Result.RESULT_OK)
-					throw new ArgumentException("Corrupted input data");
+				int length;
 
-				if (outputLength < (int)info.uncompressedSize)
-					throw new ArgumentException("Output buffer too small");
+				if (Compress(input_p, inputLength, output_p, outputLength, out length) == Result.RESULT_OK)
+					return length;
 
-				outputLength = (int)info.uncompressedSize;
-
-				fixed (byte* dst = &output[outputOffset])
-				{
-
-					if (decompress(src, inputLength, dst, outputLength) != Result.RESULT_OK)
-						throw new ArgumentException("Corrupted data or out buffer is too small");
-
-					return outputLength;
-				}
+				// buffer is too small
+				return -1;
 			}
 		}
 
-		public unsafe static byte[] Decode(
+		public static unsafe byte[] Encode(
 			byte[] input, int inputOffset, int inputLength)
 		{
-			/*
-			CheckArguments(
-				input, inputOffset, inputLength);
-			*/
+			CheckArguments(input, inputOffset, ref inputLength);
 
-			fixed (byte* src = &input[inputOffset])
+			var maxOutputSize = MaximumOutputLength(inputLength);
+
+			var bufferLength = maxOutputSize;
+			var buffer = new byte[bufferLength];
+
+			fixed (byte* input_p = &input[inputOffset])
+			fixed (byte* output_p = buffer)
 			{
+				int outputLength;
 
-				CompressionInfo info = new CompressionInfo();
-				if (GetCompressionInfo(src, inputLength, ref info) != Result.RESULT_OK)
-					throw new ArgumentException("Corrupted input data");
+				if (Compress(input_p, inputLength, output_p, bufferLength, out outputLength) != Result.RESULT_OK)
+					throw new InvalidOperationException("Compressed data has been corrupted");
 
-				int outputLength = (int)info.uncompressedSize;
-				byte[] output = new byte[outputLength];
+				if (outputLength == bufferLength)
+					return buffer;
 
-				fixed (byte* dst = &output[0])
+				var output = new byte[outputLength];
+				var src = output_p;
+				fixed (byte* dst = output)
 				{
-
-					if (decompress(src, inputLength, dst, outputLength) != Result.RESULT_OK)
-						throw new ArgumentException("Corrupted data");
-
-					return output;
+					BlockCopy(src, dst, outputLength);
 				}
+
+				return output;
 			}
 		}
 	}
 }
+
+// ReSharper restore InconsistentNaming

@@ -11,9 +11,11 @@ namespace DobozMM
 	void DobozCodec::CheckArguments(
 		array<Byte>^ input, int inputOffset, int% inputLength)
 	{
-		if (inputLength < 0) inputLength = input->Length - inputOffset;
+		if (input == nullptr) 
+			throw gcnew ArgumentNullException("input");
 
-		if (input == nullptr) throw gcnew ArgumentNullException("input");
+		if (inputLength < 0) 
+			inputLength = input->Length - inputOffset;
 		if (inputOffset < 0 || inputOffset + inputLength > input->Length)
 			throw gcnew ArgumentException("inputOffset and inputLength are invalid for given input");
 	}
@@ -22,19 +24,18 @@ namespace DobozMM
 		array<Byte>^ input, int inputOffset, int% inputLength,
 		array<Byte>^ output, int outputOffset, int% outputLength)
 	{
-		if (inputLength < 0) inputLength = input->Length - inputOffset;
-		if (inputLength == 0)
-		{
-			outputLength = 0;
-			return;
-		}
+		if (input == nullptr) 
+			throw gcnew ArgumentNullException("input");
+		if (output == nullptr) 
+			throw gcnew ArgumentNullException("output");
 
-		if (input == nullptr) throw gcnew ArgumentNullException("input");
+		if (inputLength < 0) 
+			inputLength = input->Length - inputOffset;
 		if (inputOffset < 0 || inputOffset + inputLength > input->Length)
 			throw gcnew ArgumentException("inputOffset and inputLength are invalid for given input");
 
-		if (outputLength < 0) outputLength = output->Length - outputOffset;
-		if (output == nullptr) throw gcnew ArgumentNullException("output");
+		if (outputLength < 0) 
+			outputLength = output->Length - outputOffset;
 		if (outputOffset < 0 || outputOffset + outputLength > output->Length)
 			throw gcnew ArgumentException("outputOffset and outputLength are invalid for given output");
 	}
