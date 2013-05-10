@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doboz", "Doboz\Doboz.csproj", "{0964331F-D737-4911-A387-FECC7A07BD5F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DobozN", "DobozN\DobozN.csproj", "{0C93F0A9-C008-49A5-B018-4BB6D66A9A74}"
@@ -96,6 +96,7 @@ Global
 		{4C24528C-5B48-411E-9BA9-3248F4569434}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C24528C-5B48-411E-9BA9-3248F4569434}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4C24528C-5B48-411E-9BA9-3248F4569434}.Release|x64.ActiveCfg = Release|Any CPU
+		{4C24528C-5B48-411E-9BA9-3248F4569434}.Release|x64.Build.0 = Release|Any CPU
 		{4C24528C-5B48-411E-9BA9-3248F4569434}.Release|x86.ActiveCfg = Release|Any CPU
 		{4158BA96-A5B6-4307-AE99-DE9C35ED9055}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4158BA96-A5B6-4307-AE99-DE9C35ED9055}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -106,6 +107,7 @@ Global
 		{4158BA96-A5B6-4307-AE99-DE9C35ED9055}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4158BA96-A5B6-4307-AE99-DE9C35ED9055}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4158BA96-A5B6-4307-AE99-DE9C35ED9055}.Release|x64.ActiveCfg = Release|Any CPU
+		{4158BA96-A5B6-4307-AE99-DE9C35ED9055}.Release|x64.Build.0 = Release|Any CPU
 		{4158BA96-A5B6-4307-AE99-DE9C35ED9055}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution

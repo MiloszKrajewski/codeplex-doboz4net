@@ -277,7 +277,8 @@ namespace DobozN
 		protected static ushort Peek2(byte[] buffer, int offset)
 		{
 			// NOTE: It's faster than BitConverter.ToUInt16 (suprised? me too)
-			return (ushort)(((uint)buffer[offset]) | ((uint)buffer[offset + 1] << 8));
+			return (ushort)(
+				((uint)buffer[offset]) | ((uint)buffer[offset + 1] << 8));
 		}
 
 		protected static uint Peek4(byte[] buffer, int offset)
@@ -285,31 +286,9 @@ namespace DobozN
 			// NOTE: It's faster than BitConverter.ToUInt32 (suprised? me too)
 			return
 				((uint)buffer[offset]) |
-					((uint)buffer[offset + 1] << 8) |
-					((uint)buffer[offset + 2] << 16) |
-					((uint)buffer[offset + 3] << 24);
-		}
-
-		protected static void Copy4(byte[] buf, int src, int dst)
-		{
-			Debug.Assert(
-				dst > src || dst + 4 <= src,
-				"Copying backwards is not implemented");
-			buf[dst + 3] = buf[src + 3];
-			buf[dst + 2] = buf[src + 2];
-			buf[dst + 1] = buf[src + 1];
-			buf[dst + 0] = buf[src + 0];
-		}
-
-		protected static void Copy4(byte[] src, int src_0, byte[] dst, int dst_0)
-		{
-			Debug.Assert(
-				dst != src || src_0 + 4 <= dst_0 || dst_0 + 4 <= src_0,
-				"Copying overlapping buffers is not implemented");
-			dst[dst_0 + 0] = src[src_0 + 0];
-			dst[dst_0 + 1] = src[src_0 + 1];
-			dst[dst_0 + 2] = src[src_0 + 2];
-			dst[dst_0 + 3] = src[src_0 + 3];
+				((uint)buffer[offset + 1] << 8) |
+				((uint)buffer[offset + 2] << 16) |
+				((uint)buffer[offset + 3] << 24);
 		}
 
 		// ReSharper restore RedundantCast
@@ -625,7 +604,11 @@ namespace DobozN
 							Debug.Assert(src_p + WORD_SIZE <= src_end);
 							Debug.Assert(dst_p + WORD_SIZE <= dst_end);
 #if DOBOZ_SAFE
-							Copy4(source, src_p, destination, dst_p);
+							// Copy4(source, src_p, destination, dst_p);
+							destination[dst_p + 0] = source[src_p + 0];
+							destination[dst_p + 1] = source[src_p + 1];
+							destination[dst_p + 2] = source[src_p + 2];
+							destination[dst_p + 3] = source[src_p + 3];
 #else
 							*(uint*)dst_p = *(uint*)src_p;
 #endif
@@ -753,7 +736,11 @@ namespace DobozN
 							Debug.Assert(matchString + i + WORD_SIZE <= dst_end);
 							Debug.Assert(dst_p + i + WORD_SIZE <= dst_end);
 #if DOBOZ_SAFE
-							Copy4(destination, matchString + i, dst_p + i);
+							// Copy4(destination, matchString + i, dst_p + i);
+							destination[dst_p + i + 0] = destination[matchString + i + 0];
+							destination[dst_p + i + 1] = destination[matchString + i + 1];
+							destination[dst_p + i + 2] = destination[matchString + i + 2];
+							destination[dst_p + i + 3] = destination[matchString + i + 3];
 #else
 							*(uint*)(dst_p + i) = *(uint*)(matchString + i);
 #endif
