@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Doboz.Tests
 {
 	[TestFixture]
-	public class Class1
+	public class BasicTests
 	{
 		public const string LoremIpsum =
 			"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut " +

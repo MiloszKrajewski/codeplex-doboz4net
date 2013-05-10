@@ -41,8 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DobozCodec.Unsafe.cs" />
-    <Compile Include="DobozCodec.Unsafe.Dirty.cs" />
     <Compile Include="Dictionary.cs" />
     <Compile Include="DobozCodec.cs" />
     <Compile Include="DobozDecoder.cs" />

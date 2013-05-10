@@ -48,6 +48,19 @@ namespace DobozN
 
 		#endregion
 
+		#region fields
+
+#if DOBOZ_SAFE
+		private readonly byte[] _data; // pointer to the beginning of the buffer inside which we look for matches
+#else
+		private readonly byte* _data; // pointer to the beginning of the buffer inside which we look for matches
+#endif
+		private int _base;
+
+		#endregion
+
+		#region constructor
+
 		private Dictionary()
 		{
 			Debug.Assert(INVALID_POSITION < 0);
@@ -62,23 +75,10 @@ namespace DobozN
 			_children = new int[CHILD_COUNT];
 		}
 
-		#region fields
-
-#if DOBOZ_SAFE
-		private readonly byte[] _data; // pointer to the beginning of the buffer inside which we look for matches
-#else
-		private readonly byte* _data; // pointer to the beginning of the buffer inside which we look for matches
-#endif
-		private int _base;
-
-		#endregion
-
-		#region constructor
-
 #if DOBOZ_SAFE
 		public Dictionary(byte[] buffer, int bufferOffset, int bufferLength)
 #else
-		public Dictionary(byte* buffer, int bufferLength)
+		public Dictionary(byte* buffer, int bufferOffset, int bufferLength)
 #endif
 			: this()
 		{
@@ -103,11 +103,11 @@ namespace DobozN
 			// never exceeds the size of the dictionary We don't store larger (64-bit) positions, because that 
 			// can significantly degrade performance
 			// Initialize the relative position base pointer
-#if DOBOZ_SAFE
 			_base = bufferOffset;
+
+#if DOBOZ_SAFE
 			var ht = _hashTable;
 #else
-			_base = 0;
 			fixed (int* ht = _hashTable)
 #endif
 			{
@@ -122,11 +122,7 @@ namespace DobozN
 
 		public void Skip()
 		{
-#if DOBOZ_SAFE
-			FindMatches(null, 0);
-#else
 			FindMatches(null);
-#endif
 		}
 
 		// Finds match candidates at the current buffer position and slides the matching window to the next character
@@ -134,7 +130,7 @@ namespace DobozN
 		// The match candidates are stored in the supplied array, ordered by their length (ascending)
 		// The return value is the number of match candidates in the array
 #if DOBOZ_SAFE
-		public int FindMatches(DobozDecoder.Match[] matchCandidates, int index)
+		public int FindMatches(DobozDecoder.Match[] matchCandidates)
 #else
 		public int FindMatches(DobozDecoder.Match* matchCandidates)
 #endif

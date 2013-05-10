@@ -64,7 +64,7 @@ namespace Doboz.Tests
 			var compressors = new[] {
 				new TimedMethod("MixedMode", (b, l) => DobozMM.DobozCodec.Encode(b, 0, l)),
 				new TimedMethod("Unsafe", (b, l) => DobozN.DobozCodec.Encode(b, 0, l)),
-				new TimedMethod("Safe", (b, l) => DobozMM.DobozCodec.Encode(b, 0, l)),
+				new TimedMethod("Safe", (b, l) => DobozS.DobozCodec.Encode(b, 0, l)),
 			};
 
 			var decompressors = new[] {
