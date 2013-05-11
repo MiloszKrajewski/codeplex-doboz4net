@@ -72,8 +72,17 @@
 
 #endregion
 
+// ReSharper disable InconsistentNaming
+
+#if !DOBOZ_UNSAFE
+// by default it is always safe (it's... safer?) :-)
+#define DOBOZ_SAFE
+#endif
+
 using System;
 using System.Diagnostics;
+
+// NOTE: this file is shared by safe and unsafe implemenations.
 
 #if DOBOZ_SAFE
 namespace DobozS
@@ -81,35 +90,34 @@ namespace DobozS
 namespace DobozN
 #endif
 {
+	/// <summary>
+	/// Doboz codec.
+	/// </summary>
 #if DOBOZ_SAFE
-	public partial class DobozCodec: DobozDecoder
+	public class DobozCodec: DobozDecoder
 #else
-	public unsafe partial class DobozCodec: DobozDecoder
+	public unsafe class DobozCodec: DobozDecoder
 #endif
 	{
+		#region consts
+
 		internal const int MAX_MATCH_LENGTH = 255 + MIN_MATCH_LENGTH;
 		internal const int MAX_MATCH_CANDIDATE_COUNT = 128;
 		internal const int DICTIONARY_SIZE = 1 << 21; // 2 MB, must be a power of 2!
 		private const int TRAILING_DUMMY_SIZE = WORD_SIZE; // safety trailing bytes which decrease the number of necessary buffer checks
 
-#if DOBOZ_SAFE
-		protected static void Poke2(byte[] buffer, int offset, ushort value)
-		{
-			buffer[offset] = (byte)value;
-			buffer[offset + 1] = (byte)(value >> 8);
-		}
-
-		protected static void Poke4(byte[] buffer, int offset, uint value)
-		{
-			buffer[offset] = (byte)value;
-			buffer[offset + 1] = (byte)(value >> 8);
-			buffer[offset + 2] = (byte)(value >> 16);
-			buffer[offset + 3] = (byte)(value >> 24);
-		}
-#endif
+		#endregion
 
 		#region public interface
 
+		/// <summary>Encodes the specified input.</summary>
+		/// <param name="input">The input.</param>
+		/// <param name="inputOffset">The input offset.</param>
+		/// <param name="inputLength">Length of the input.</param>
+		/// <param name="output">The output.</param>
+		/// <param name="outputOffset">The output offset.</param>
+		/// <param name="outputLength">Length of the output.</param>
+		/// <returns>Number of bytes in compressed buffer. Negative value means thet output buffer was too small.</returns>
 		public static int Encode(
 			byte[] input, int inputOffset, int inputLength,
 			byte[] output, int outputOffset, int outputLength)
@@ -136,6 +144,11 @@ namespace DobozN
 			}
 		}
 
+		/// <summary>Encodes the specified input.</summary>
+		/// <param name="input">The input.</param>
+		/// <param name="inputOffset">The input offset.</param>
+		/// <param name="inputLength">Length of the input.</param>
+		/// <returns>Encoded buffer.</returns>
 		public static byte[] Encode(
 			byte[] input, int inputOffset, int inputLength)
 		{
@@ -180,6 +193,22 @@ namespace DobozN
 		#endregion
 
 		#region private implementation
+
+#if DOBOZ_SAFE
+		private static void Poke2(byte[] buffer, int offset, ushort value)
+		{
+			buffer[offset] = (byte)value;
+			buffer[offset + 1] = (byte)(value >> 8);
+		}
+
+		private static void Poke4(byte[] buffer, int offset, uint value)
+		{
+			buffer[offset] = (byte)value;
+			buffer[offset + 1] = (byte)(value >> 8);
+			buffer[offset + 2] = (byte)(value >> 16);
+			buffer[offset + 3] = (byte)(value >> 24);
+		}
+#endif
 
 		// Store the source
 #if DOBOZ_SAFE
@@ -292,7 +321,9 @@ namespace DobozN
 
 #if DOBOZ_SAFE
 		private static Result Compress(
-			byte[] source, int sourceOffset, int sourceSize, byte[] destination, int destinationOffset, int destinationSize, out int compressedSize)
+			byte[] source, int sourceOffset, int sourceSize, 
+			byte[] destination, int destinationOffset, int destinationSize, 
+			out int compressedSize)
 #else
 		private static Result Compress(
 			byte* source, int sourceOffset, int sourceSize, byte* destination, int destinationOffset, int destinationSize, out int compressedSize)
@@ -606,7 +637,7 @@ namespace DobozN
 		}
 
 		#endregion
-
-
 	}
 }
+
+// ReSharper restore InconsistentNaming

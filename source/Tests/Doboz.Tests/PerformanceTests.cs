@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using Doboz.Tests.Utilities;
@@ -16,15 +18,46 @@ namespace Doboz.Tests
 				new TimedMethod("MixedMode", (b, l) => DobozMM.DobozCodec.Encode(b, 0, l)),
 				new TimedMethod("Unsafe", (b, l) => DobozN.DobozCodec.Encode(b, 0, l)),
 				new TimedMethod("Safe", (b, l) => DobozS.DobozCodec.Encode(b, 0, l)),
+				new TimedMethod("Deflate", DeflateEncode),
+				new TimedMethod("LZ4n", (b, l) => LZ4n.LZ4Codec.Encode64HC(b, 0, l)), 
+				new TimedMethod("LZ4s", (b, l) => LZ4s.LZ4Codec.Encode64HC(b, 0, l)), 
 			};
 
 			var decompressors = new[] {
 				new TimedMethod("MixedMode", (b, l) => DobozMM.DobozCodec.Decode(b, 0, b.Length)),
 				new TimedMethod("Unsafe", (b, l) => DobozN.DobozCodec.Decode(b, 0, b.Length)),
 				new TimedMethod("Safe", (b, l) => DobozS.DobozCodec.Decode(b, 0, b.Length)),
+				new TimedMethod("Deflate", DeflateDecode), 
+				new TimedMethod("LZ4n", (b, l) => LZ4n.LZ4Codec.Decode64(b, 0, b.Length, l)), 
+				new TimedMethod("LZ4s", (b, l) => LZ4s.LZ4Codec.Decode64(b, 0, b.Length, l)), 
 			};
 
 			TestPerformance(compressors, decompressors);
+		}
+
+		private byte[] DeflateEncode(byte[] b, int l)
+		{
+			using (var istream = new MemoryStream(b))
+			using (var ostream = new MemoryStream())
+			{
+				using (var zstream = new DeflateStream(ostream, CompressionMode.Compress))
+				{
+					istream.CopyTo(zstream);
+					zstream.Flush();
+				}
+				return ostream.ToArray();
+			}
+		}
+
+		private byte[] DeflateDecode(byte[] b, int l)
+		{
+			using (var istream = new MemoryStream(b))
+			using (var zstream = new DeflateStream(istream, CompressionMode.Decompress))
+			{
+				var result = new byte[l];
+				zstream.Read(result, 0, l);
+				return result;
+			}
 		}
 
 		private static void TestPerformance(TimedMethod[] compressors, TimedMethod[] decompressors)
@@ -42,7 +75,7 @@ namespace Doboz.Tests
 
 				var provider = new FileDataProvider(Common.TEST_DATA_FOLDER);
 				long total = 0;
-				const long limit = 1L*1024*1024*1024;
+				const long limit = Common.TEST_DATA_BYTES;
 				var last_pct = 0;
 
 				while (total < limit)

@@ -14,10 +14,15 @@ Task default -depends LibZ
 
 Task LibZ -depends Release {
 	Create-Folder libz
+	Create-Folder libz_mm
 	
-	copy-item any\*.dll libz\
+	copy-item any\Doboz.dll libz\
+	copy-item any\DobozN.dll libz\
+	copy-item any\DobozS.dll libz\
+	copy-item any\*.dll libz_mm\
 	
 	exec { cmd /c $libz inject-dll -a libz\Doboz.dll -i libz\*.dll -e Doboz.dll "--move" -k $snk }
+	exec { cmd /c $libz inject-dll -a libz_mm\Doboz.dll -i libz_mm\*.dll -e Doboz.dll "--move" -k $snk }
 }
 
 Task Release -depends Rebuild {

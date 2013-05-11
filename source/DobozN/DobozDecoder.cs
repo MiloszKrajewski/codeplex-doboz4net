@@ -88,6 +88,9 @@ namespace DobozS
 namespace DobozN
 #endif
 {
+	/// <summary>
+	/// Doboz decoder.
+	/// </summary>
 #if DOBOZ_SAFE
 	public class DobozDecoder
 #else
@@ -132,6 +135,7 @@ namespace DobozN
 
 		#region struct Header
 
+		/// <summary>HEader structure.</summary>
 		internal struct Header
 		{
 			public int uncompressedSize;
@@ -144,7 +148,8 @@ namespace DobozN
 
 		#region struct CompressionInfo
 
-		public struct CompressionInfo
+		/// <summary>Compression info.</summary>
+		internal struct CompressionInfo
 		{
 			public int uncompressedSize;
 			public int compressedSize;
@@ -155,7 +160,7 @@ namespace DobozN
 
 		#region consts
 
-		public const int VERSION = 0; // encoding format
+		internal const int VERSION = 0; // encoding format
 
 		internal const int WORD_SIZE = 4; // uint32_t
 		internal const int MIN_MATCH_LENGTH = 3;
@@ -184,12 +189,44 @@ namespace DobozN
 
 		#region public interface
 
+		/// <summary>Gets the maximum length of the output.</summary>
+		/// <param name="size">The uncompressed length.</param>
+		/// <returns>Maximum compressed length.</returns>
 		public static int MaximumOutputLength(int size)
 		{
 			// The header + the original uncompressed data
 			return GetHeaderSize(size) + size;
 		}
 
+		/// <summary>Gets the uncompressed length.</summary>
+		/// <param name="input">The buffer.</param>
+		/// <param name="inputOffset">The buffer offset.</param>
+		/// <param name="inputLength">Length of the buffer.</param>
+		/// <returns>Length of uncompressed data.</returns>
+		public static int UncompressedLength(byte[] input, int inputOffset, int inputLength)
+		{
+			CheckArguments(
+				input, inputOffset, ref inputLength);
+
+#if DOBOZ_SAFE
+			var src = input;
+#else
+			fixed (byte* src = input)
+#endif
+			{
+				var info = new CompressionInfo();
+				if (GetCompressionInfo(src, inputOffset, inputLength, ref info) != Result.RESULT_OK)
+					throw new ArgumentException("Corrupted input data");
+
+				return info.uncompressedSize;
+			}
+		}
+
+		/// <summary>Decodes the specified input.</summary>
+		/// <param name="input">The input.</param>
+		/// <param name="inputOffset">The input offset.</param>
+		/// <param name="inputLength">Length of the input.</param>
+		/// <returns>Decoded buffer.</returns>
 		public static byte[] Decode(
 			byte[] input, int inputOffset, int inputLength)
 		{
@@ -223,10 +260,57 @@ namespace DobozN
 			}
 		}
 
+		/// <summary>Decodes the specified input.</summary>
+		/// <param name="input">The input.</param>
+		/// <param name="inputOffset">The input offset.</param>
+		/// <param name="inputLength">Length of the input.</param>
+		/// <param name="output">The output.</param>
+		/// <param name="outputOffset">The output offset.</param>
+		/// <param name="outputLength">Length of the output.</param>
+		/// <returns>Number of decoded bytes.</returns>
+		public static int Decode(
+			byte[] input, int inputOffset, int inputLength,
+			byte[] output, int outputOffset, int outputLength)
+		{
+			CheckArguments(
+				input, inputOffset, ref inputLength,
+				output, outputOffset, ref outputLength);
+
+#if DOBOZ_SAFE
+			var src = input;
+#else
+			fixed (byte* src = input)
+#endif
+			{
+				var info = new CompressionInfo();
+				if (GetCompressionInfo(src, inputOffset, inputLength, ref info) != Result.RESULT_OK)
+					throw new ArgumentException("Corrupted input data");
+
+				if (outputLength < info.uncompressedSize)
+					throw new ArgumentException("Output buffer is too small");
+
+				outputLength = info.uncompressedSize;
+
+#if DOBOZ_SAFE
+				var dst = output;
+#else
+				fixed (byte* dst = output)
+#endif
+				{
+					if (Decompress(src, inputOffset, inputLength, dst, outputOffset, outputLength) != Result.RESULT_OK)
+						throw new ArgumentException("Corrupted data");
+					return outputLength;
+				}
+			}
+		}
+
 		#endregion
 
 		#region protected interface
 
+		/// <summary>Gets the size of size field (1, 2 or 4 bytes).</summary>
+		/// <param name="size">The size.</param>
+		/// <returns>Number of bytes needed to store size.</returns>
 		protected static int GetSizeCodedSize(int size)
 		{
 			return
@@ -235,11 +319,20 @@ namespace DobozN
 						sizeof(uint);
 		}
 
+		/// <summary>Gets the size of the header.</summary>
+		/// <param name="size">The size.</param>
+		/// <returns>Size of header.</returns>
 		protected static int GetHeaderSize(int size)
 		{
 			return 1 + 2 * GetSizeCodedSize(size);
 		}
 
+		/// <summary>Checks the arguments.</summary>
+		/// <param name="input">The input.</param>
+		/// <param name="inputOffset">The input offset.</param>
+		/// <param name="inputLength">Length of the input.</param>
+		/// <exception cref="System.ArgumentNullException">input</exception>
+		/// <exception cref="System.ArgumentException">inputOffset and inputLength are invalid for given input</exception>
 		protected static void CheckArguments(
 			byte[] input, int inputOffset, ref int inputLength)
 		{
@@ -251,6 +344,17 @@ namespace DobozN
 				throw new ArgumentException("inputOffset and inputLength are invalid for given input");
 		}
 
+		/// <summary>Checks the arguments.</summary>
+		/// <param name="input">The input.</param>
+		/// <param name="inputOffset">The input offset.</param>
+		/// <param name="inputLength">Length of the input.</param>
+		/// <param name="output">The output.</param>
+		/// <param name="outputOffset">The output offset.</param>
+		/// <param name="outputLength">Length of the output.</param>
+		/// <exception cref="System.ArgumentNullException">input or output</exception>
+		/// <exception cref="System.ArgumentException">
+		/// inputOffset and inputLength are invalid for given input or outputOffset and outputLength are invalid for given output
+		/// </exception>
 		protected static void CheckArguments(
 			byte[] input, int inputOffset, ref int inputLength,
 			byte[] output, int outputOffset, ref int outputLength)
@@ -274,6 +378,10 @@ namespace DobozN
 #if DOBOZ_SAFE
 		// ReSharper disable RedundantCast
 
+		/// <summary>Peeks ushort from specified buffer.</summary>
+		/// <param name="buffer">The buffer.</param>
+		/// <param name="offset">The offset.</param>
+		/// <returns>ushort value.</returns>
 		protected static ushort Peek2(byte[] buffer, int offset)
 		{
 			// NOTE: It's faster than BitConverter.ToUInt16 (suprised? me too)
@@ -281,6 +389,10 @@ namespace DobozN
 				((uint)buffer[offset]) | ((uint)buffer[offset + 1] << 8));
 		}
 
+		/// <summary>Peeks uint from specified buffer.</summary>
+		/// <param name="buffer">The buffer.</param>
+		/// <param name="offset">The offset.</param>
+		/// <returns>uint value.</returns>
 		protected static uint Peek4(byte[] buffer, int offset)
 		{
 			// NOTE: It's faster than BitConverter.ToUInt32 (suprised? me too)

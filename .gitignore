@@ -1,5 +1,6 @@
 /release/any/
 /release/libz/
+/release/libz_mm/
 /release/x64/
 /release/x86/
 bin/

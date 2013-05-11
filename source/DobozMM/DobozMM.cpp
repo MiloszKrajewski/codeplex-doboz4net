@@ -152,4 +152,20 @@ namespace DobozMM
 
 		return output;
 	}
+
+	int DobozCodec::UncompressedLength(
+		array<Byte>^ input, int inputOffset, int inputLength)
+	{
+		CheckArguments(
+			input, inputOffset, inputLength);
+
+		doboz::Decompressor decompressor;
+		pin_ptr<Byte> src = &input[inputOffset];
+
+		doboz::CompressionInfo info;
+		if (decompressor.getCompressionInfo(src, inputLength, info) != doboz::RESULT_OK)
+			throw gcnew ArgumentException("Corrupted input data");
+
+		return (int)info.uncompressedSize;
+	}
 } // namespace DobozMM

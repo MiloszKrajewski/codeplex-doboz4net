@@ -5,6 +5,8 @@ namespace Doboz.Tests
 {
 	public class Common
 	{
+		public const long TEST_DATA_BYTES = 1024*1024*128;
+
 		public const string TEST_DATA_FOLDER = @"T:\Temp\Corpus";
 		//public const string TEST_DATA_FOLDER = @"D:\Archive\Corpus";
 

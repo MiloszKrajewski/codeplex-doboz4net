@@ -11,6 +11,7 @@
     <AssemblyName>Doboz</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Doboz.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,11 +30,13 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Doboz.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <AssemblyOriginatorKeyFile>..\Doboz.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LibZ.Bootstrap">
-      <HintPath>..\packages\LibZ.Bootstrap.1.0.3.3\lib\net40-client\LibZ.Bootstrap.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,6 +48,12 @@
   <ItemGroup>
     <Compile Include="DobozCodec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="IDobozService.cs" />
+    <Compile Include="Services\DobozServiceMM.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Services\DobozServiceN.cs" />
+    <Compile Include="Services\DobozServiceS.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -53,7 +63,16 @@
       <Project>{7ed7903c-2093-407c-9d66-9620421b2c1d}</Project>
       <Name>DobozMM %28Visual Studio 2010%29</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DobozN\DobozN.csproj">
+      <Project>{0c93f0a9-c008-49a5-b018-4bb6d66a9a74}</Project>
+      <Name>DobozN</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DobozS\DobozS.csproj">
+      <Project>{c6a3ffd9-5ef6-4732-bc2b-5e524b8fb845}</Project>
+      <Name>DobozS</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

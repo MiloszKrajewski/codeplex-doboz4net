@@ -19,6 +19,9 @@ namespace DobozMM
 	public:
 		static int MaximumOutputLength(int inputSize);
 
+		static int DobozCodec::UncompressedLength(
+			array<Byte>^ input, int inputOffset, int inputLength);
+
 		static int Encode(
 			array<Byte>^ input, int inputOffset, int inputLength,
 			array<Byte>^ output, int outputOffset, int outputLength);
