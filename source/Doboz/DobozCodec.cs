@@ -195,7 +195,7 @@ namespace Doboz
 		/// <summary>Gets the maximum length of the output.</summary>
 		/// <param name="size">The uncompressed length.</param>
 		/// <returns>Maximum compressed length.</returns>
-		public int MaximumOutputLength(int size)
+		public static int MaximumOutputLength(int size)
 		{
 			return Service.MaximumOutputLength(size);
 		}
@@ -205,7 +205,7 @@ namespace Doboz
 		/// <param name="bufferOffset">The buffer offset.</param>
 		/// <param name="bufferLength">Length of the buffer.</param>
 		/// <returns>Length of uncompressed data.</returns>
-		public int UncompressedLength(byte[] buffer, int bufferOffset, int bufferLength)
+		public static int UncompressedLength(byte[] buffer, int bufferOffset, int bufferLength)
 		{
 			return Service.UncompressedLength(buffer, bufferOffset, bufferLength);
 		}
@@ -218,7 +218,7 @@ namespace Doboz
 		/// <param name="outputOffset">The output offset.</param>
 		/// <param name="outputLength">Length of the output.</param>
 		/// <returns>Number of decoded bytes.</returns>
-		public int Decode(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset, int outputLength)
+		public static int Decode(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset, int outputLength)
 		{
 			return Service.Decode(input, inputOffset, inputLength, output, outputOffset, outputLength);
 		}
@@ -231,7 +231,7 @@ namespace Doboz
 		/// <param name="outputOffset">The output offset.</param>
 		/// <param name="outputLength">Length of the output.</param>
 		/// <returns>Number of bytes in compressed buffer. Negative value means thet output buffer was too small.</returns>
-		public int Encode(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset, int outputLength)
+		public static int Encode(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset, int outputLength)
 		{
 			return Service.Encode(input, inputOffset, inputLength, output, outputOffset, outputLength);
 		}
@@ -241,7 +241,7 @@ namespace Doboz
 		/// <param name="inputOffset">The input offset.</param>
 		/// <param name="inputLength">Length of the input.</param>
 		/// <returns>Decoded buffer.</returns>
-		public byte[] Decode(byte[] input, int inputOffset, int inputLength)
+		public static byte[] Decode(byte[] input, int inputOffset, int inputLength)
 		{
 			return Service.Decode(input, inputOffset, inputLength);
 		}
@@ -251,7 +251,7 @@ namespace Doboz
 		/// <param name="inputOffset">The input offset.</param>
 		/// <param name="inputLength">Length of the input.</param>
 		/// <returns>Encoded buffer.</returns>
-		public byte[] Encode(byte[] input, int inputOffset, int inputLength)
+		public static byte[] Encode(byte[] input, int inputOffset, int inputLength)
 		{
 			return Service.Encode(input, inputOffset, inputLength);
 		}
