@@ -46,15 +46,15 @@ function Update-AssemblyVersion([string] $folder, [string] $version, [string[]] 
 	$aiProductVersionRx = '(?<=AssemblyVersion(Attribute)?\(")[0-9]+(\.([0-9]+|\*)){1,3}(?="\))'
 	$aiFileVersionRx = '(?<=AssemblyFileVersion(Attribute)?\(")[0-9]+(\.([0-9]+|\*)){1,3}(?="\))'
 
-    $rclProductVersionRx = "(?<=^\s*PRODUCTVERSION\s+)[0-9]+(\,([0-9]+|\*)){1,3}(?=\s*$)"
-    $rclFileVersionRx = "(?<=^\s*FILEVERSION\s+)[0-9]+(\,([0-9]+|\*)){1,3}(?=\s*$)"
+	$rclProductVersionRx = "(?<=^\s*PRODUCTVERSION\s+)[0-9]+(\,([0-9]+|\*)){1,3}(?=\s*$)"
+	$rclFileVersionRx = "(?<=^\s*FILEVERSION\s+)[0-9]+(\,([0-9]+|\*)){1,3}(?=\s*$)"
 
-    $rcvProductVersionRx = '(?<=^\s*VALUE\s+"ProductVersion",\s*")1.0.0.90(?="\s*$)'
-    $rcvFileVersionRx = '(?<=^\s*VALUE\s+"FileVersion",\s*")1.0.0.90(?="\s*$)'
+	$rcvProductVersionRx = '(?<=^\s*VALUE\s+"ProductVersion",\s*")1.0.0.90(?="\s*$)'
+	$rcvFileVersionRx = '(?<=^\s*VALUE\s+"FileVersion",\s*")1.0.0.90(?="\s*$)'
 	
 	get-childitem -recurse -include "AssemblyInfo.cs","AssemblyInfo.cpp","app.rc" $folder | % {
 		$name = resolve-path $_.FullName -relative
-        $isrc = $_.Extension -eq ".rc"
+		$isrc = $_.Extension -eq ".rc"
 		
 		$update_assembly_and_file = $true
 		
@@ -66,18 +66,18 @@ function Update-AssemblyVersion([string] $folder, [string] $version, [string[]] 
 		
 		$content = $original = get-content $name
 
-        if ($isrc) {
-            $content = $content | % { $_ -replace $rclFileVersionRx, ($version -replace "\.", ",") }
-            $content = $content | % { $_ -replace $rcvFileVersionRx, $version }
-        } else {
+		if ($isrc) {
+			$content = $content | % { $_ -replace $rclFileVersionRx, ($version -replace "\.", ",") }
+			$content = $content | % { $_ -replace $rcvFileVersionRx, $version }
+		} else {
 			$content = $content | % { $_ -replace $aiFileVersionRx, $version }
 		}
 
 		if ($update_assembly_and_file) {
-            if ($isrc) {
-                $content = $content | % { $_ -replace $rclProductVersionRx, ($version -replace "\.", ",") }
-                $content = $content | % { $_ -replace $rcvProductVersionRx, $version }
-            } else {
+			if ($isrc) {
+				$content = $content | % { $_ -replace $rclProductVersionRx, ($version -replace "\.", ",") }
+				$content = $content | % { $_ -replace $rcvProductVersionRx, $version }
+			} else {
 				$content = $content | % { $_ -replace $aiProductVersionRx, $version }
 			}
 		}
@@ -90,8 +90,8 @@ function Update-AssemblyVersion([string] $folder, [string] $version, [string[]] 
 			}
 		
 			$content > $tmp
-		    if (test-path ($name)) { remove-item $name }
-		    move-item $tmp $name -force	
+			if (test-path ($name)) { remove-item $name }
+			move-item $tmp $name -force	
 		}
 	}
 }
